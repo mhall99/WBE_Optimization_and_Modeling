@@ -29,16 +29,19 @@ swmm.initialize(inp)
 #***************************************************
 #State Space initialization
 #***************************************************
-No = 1935 #viral load
+No = 1935 #initial viral load
 Nt=No
 
 #input output matrices which are constant for now. may change if we make
 #   state space time variant
-B=[1, 0]
-C=[1,0],[0,1]
-D=0
+length = swmm.get_from_input(inp, LINK, LENGTH)
+n = length/100 #number of states in the system
+m = 2 #number of inputs
+A = np.eye(n) #details decay factors of viral load for each state
+B = np.eye(m,n) #details location of viral inputs
+C = np.eye(n) #details location of sensors in the system (assuming all nodes have sensors)
+D = 0
 
-#
 while( not swmm.is_over() ): 
     
 	# ----------------- Run step and retrieve simulation time -----------
@@ -57,24 +60,12 @@ while( not swmm.is_over() ):
     #flow represents velocity. time derived from here describes time of viral
     #   travel from the last point. dividing length of current link by flow
     #   should give that time.
-    t= length/flow
+    t = length/flow
     flowtime.append(t)
     #k represents the half-life/viral decay.
-    k=np.log(No-Nt)/flowtime
+    k = np.log(No-Nt)/flowtime
     
     Nt = No**(k*flowtime)#update Nt to proper viral volume for next iteration
-    A= [k, 0],[0, k] #update A matrix
-    signal.StateSpace(A,B,C,D)
-
-
-
-
-
-
-
-
-
-
-
-
+    A = k*A #update A matrix
+    signal.StateSpace(A.T,B.T,C.T,D)
 
