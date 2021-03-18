@@ -68,4 +68,16 @@ while( not swmm.is_over() ):
     Nt = No**(k*flowtime)#update Nt to proper viral volume for next iteration
     A = k*A #update A matrix
     signal.StateSpace(A.T,B.T,C.T,D)
+    u = 100
+    #dx = A*x + B*u
+    #y = C*x
+    
+    #def dx(t,x):
+        #u = 100
+        #dx = A*x + B*u
+        
+    #xs = np.linspace(0,5,100)
+    #ys = odeint(dx, No, xs)
+    tspan = np.linspace(0,1000)
+    plt.plot(tspan, y)
 
