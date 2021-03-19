@@ -6,7 +6,7 @@ Created on Fri Mar  5 17:03:43 2021
 """
 
 # Imported modules
-import swmm  # The SWMM module
+import pyswmm  # The SWMM module
 import matplotlib.pyplot as plt  # Module for plotting
 import scipy.signal as signal
 import numpy as np
@@ -14,17 +14,15 @@ import numpy as np
 # ***********************************************************************
 #  Declaration of simulation files and variables
 # ***********************************************************************
-LINK=swmm.LINK
-LENGTH=swmm.LENGTH
-FLOW=swmm.FLOW
 
-inp    = "swmm_files/3tanks.inp"  # Input file
+#dont forget to change inp depending on your own hierarchy
+inp    = "python module/swmm_files/3tanks.inp"  # Input file
+
 flow   = []
 
 time   = []
 flowtime = []
 
-swmm.initialize(inp)
 
 #***************************************************
 #State Space initialization
@@ -34,50 +32,42 @@ Nt=No
 
 #input output matrices which are constant for now. may change if we make
 #   state space time variant
-length = swmm.get_from_input(inp, LINK, LENGTH)
-n = length/100 #number of states in the system
-m = 2 #number of inputs
-A = np.eye(n) #details decay factors of viral load for each state
-B = np.eye(m,n) #details location of viral inputs
-C = np.eye(n) #details location of sensors in the system (assuming all nodes have sensors)
-D = 0
+B=[1, 0]
+C=[1,0],[0,1]
+D=0
 
-while( not swmm.is_over() ): 
+#str stores the string ids of all nodes found while id stores raw ids which can
+#   be used to find inflow and outflow of any give node
+allnodesstr=[]
+allnodesid=[]
+nodecount=0
+
+with pyswmm.Simulation(inp) as sim:
+    links = pyswmm.Links(sim)
+    nodes = pyswmm.Nodes(sim)
     
-	# ----------------- Run step and retrieve simulation time -----------
-	
-    time.append( swmm.get_time() )
-    swmm.run_step()  # Step 2
-    
-    length = swmm.get_from_input(inp, LINK, LENGTH)
-    
-    
-	# --------- Retrieve & modify information during simulation ---------
-	# Retrieve information about flow in C-5
-    f = swmm.get('C-5', FLOW, swmm.SI)
-	# Stores the information in the flow vector
-    flow.append(f)
-    #flow represents velocity. time derived from here describes time of viral
-    #   travel from the last point. dividing length of current link by flow
-    #   should give that time.
-    t = length/flow
-    flowtime.append(t)
-    #k represents the half-life/viral decay.
-    k = np.log(No-Nt)/flowtime
-    
-    Nt = No**(k*flowtime)#update Nt to proper viral volume for next iteration
-    A = k*A #update A matrix
-    signal.StateSpace(A.T,B.T,C.T,D)
-    u = 100
-    #dx = A*x + B*u
-    #y = C*x
-    
-    #def dx(t,x):
-        #u = 100
-        #dx = A*x + B*u
+    #counts through each node and performs an action to store
+    for node in nodes:
+       
+        allnodesid.append(nodes[node.nodeid])
+        allnodesstr.append(node.nodeid)
+        nodecount= nodecount+1
         
-    #xs = np.linspace(0,5,100)
-    #ys = odeint(dx, No, xs)
-    tspan = np.linspace(0,1000)
-    plt.plot(tspan, y)
+    #steps through the simulation and allows for information to be gathered
+    # at each step of the simulation
+    for step in sim:
+        count=0
+        #print the name of the node and the total inflow of it throughout the
+        #   simulation. can store the results in various arrays
+        while count <nodecount:
+            print(allnodesstr[count], allnodesid[count].total_inflow)
+            count=count+1
+
+
+
+
+
+
+
+
 
