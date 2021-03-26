@@ -724,7 +724,7 @@ class Link(object):
     def get_link_length(self):
         link_volume = self._model.getLinkResult(self._linkid,LinkResults.newVolume)
         link_diameter = self._model.getLinkResult(self._linkid,LinkResults.newDepth)
-        link_length = link_volume/(3.14**((0.5*link_diameter)**2))
+        link_length = link_volume/(3.14**((0.5**link_diameter)**2))
         return link_length
 
     @property
