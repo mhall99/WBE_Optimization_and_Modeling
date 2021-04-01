@@ -85,10 +85,10 @@ with pyswmm.Simulation(inp) as sim:
         allnodesstr.append(node.nodeid)
         nodecount=nodecount+1
     for link in links:
-        
-        linksid.append(links[link.linkid])
-        linksstr.append(link.linkid)
-        linkcount=linkcount+1
+        if link.is_conduit() :
+            linksid.append(links[link.linkid])
+            linksstr.append(link.linkid)
+            linkcount=linkcount+1
         
         
     #steps through the simulation and allows for information to be gathered
@@ -100,7 +100,7 @@ with pyswmm.Simulation(inp) as sim:
         #   simulation. can be used to store the results in various arrays
         while count < linkcount: #linkcount or nodecount
             #print(allnodesstr[count], allnodesid[count].total_inflow)
-            if linksid[count].is_conduit:
+            if linksid[count].is_conduit: #and not linksid[count].is_orifice():
                 print(linksstr[count], linksid[count].get_link_length, linksid[count].volume)
             count=count+1
             
