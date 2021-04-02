@@ -30,6 +30,38 @@ No = 1935 #initial viral load
 Nt=No
 #until we can get length from inp this will be a placeholder
 length=5000
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Mar  5 17:03:43 2021
+@author: Shalk
+"""
+
+# Imported modules
+import pyswmm  # The SWMM module
+import matplotlib.pyplot as plt  # Module for plotting
+import scipy.signal as signal
+import numpy as np
+import re
+
+# ***********************************************************************
+#  Declaration of simulation files and variables
+# ***********************************************************************
+
+#dont forget to change inp depending on your own hierarchy
+inp    = "python module/swmm_files/3tanks.inp"  # Input file
+
+aeflow   = []
+time   = []
+flowtime = []
+
+
+#***************************************************
+#State Space initialization
+#***************************************************
+No = 1935 #initial viral load
+Nt=No
+#until we can get length from inp this will be a placeholder
+length=5000
 n = length/100 #number of states in the system
 n=int(n)
 m = 2 #number of inputs
@@ -72,7 +104,22 @@ nodecount=0
 
 linksstr=[]
 linksid=[]
+linkvolume=[]
+linklength=[]
 linkcount=0
+pattern='Length'
+
+with open(inp, 'r') as inpDeck:
+    lines = inpDeck.read()
+    #lines = re.findall('Length', lines)
+    #print(lines)
+    regex = re.compile(pattern)
+    for match in regex.finditer(lines):
+        s = match.start()
+        e = match.end()
+        print(s)
+        print(e)
+        print(match.span)
 
 with pyswmm.Simulation(inp) as sim:
     links = pyswmm.Links(sim)
@@ -85,8 +132,33 @@ with pyswmm.Simulation(inp) as sim:
         allnodesstr.append(node.nodeid)
         nodecount=nodecount+1
     for link in links:
-        if link.is_conduit() :
+        if link.is_conduit():
             linksid.append(links[link.linkid])
+            linksstr.append(link.linkid)
+            linkcount=linkcount+1
+        
+    print('Node count is', nodecount)
+    print('Link count is', linkcount)
+    
+    #steps through the simulation and allows for information to be gathered
+    # at each step of the simulation
+    for step in sim:
+        count=0
+        
+        #print the name of the node and the total inflow of it throughout the
+        #   simulation. can be used to store the results in various arrays
+        while count < linkcount: #linkcount or nodecount
+            #print(allnodesstr[count], allnodesid[count].total_inflow)
+            if linksid[count].is_conduit and not linksid[count].is_orifice():
+                #print(linksstr[count], linksid[count].get_link_length, linksid[count].volume)
+                linklength.append(linksid[count].get_link_length)
+                linkvolume.append(linksid[count].volume)
+            count=count+1
+            
+
+
+#python dict function to store all our list and big data. savable into a json.
+#django web server. has a data model which stores all componenets and measurements
             linksstr.append(link.linkid)
             linkcount=linkcount+1
         
