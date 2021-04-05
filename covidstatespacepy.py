@@ -78,6 +78,12 @@ linkcount=0
 pattern='Length'
 pattern2='RAIN2'
 pattern3='RAIN1'
+pattern4='\[ORIFICES\]'
+#below pattern is for whole numbers and for decimal numbers.
+# both require a before and after the start
+lengthpattern=' \d+ '#(" \d+.\d ")
+lengthcheck=0
+length=[]
 row_const = 952
 
 with open(inp, 'r') as inpDeck:
@@ -87,6 +93,39 @@ with open(inp, 'r') as inpDeck:
     regex = re.compile(pattern)
     regex2 = re.compile(pattern2)
     regex3 = re.compile(pattern3)
+    regex4=re.compile(pattern4)
+    regexlength=re.compile(lengthpattern)
+    #here begins an attempt at a line by line approach
+    #   for finding the length in a specific range
+    for line in lines:
+        print(line)
+        #searching for match of Length and [ORIFICES] in each line
+        #   to use as conditions if pattern is found.
+        match=regex.search(line)
+        match4=regex4.search(line)
+
+        
+        #check if match for Length is found then will update 
+        #   lengthcheck to 1 to act as true for another if statement
+        if(match):
+            lengthcheck=1
+        #this should find a pattern of a decimal number and a whole number
+        #   and then append it to the length array. group 0
+        #   should be equivelent in position to length in this pattern
+        if(lengthcheck==1):
+            #this checks for pattern of a number with a decimal or a number
+            #   with no decimal. both should have a space preceding and
+            #   after the end of the number
+            lengthmatch=regexlength.finditer(line)
+            length.append(lengthmatch.group(0))
+        
+        #check match for [ORIFICES] to signify end of relevant information to
+        #   the conduit length search. This means for loop will break
+        if(match4):
+            lengthcheck=0
+            break
+    
+        
     for match in regex.finditer(lines):
         s = match.start()
         e = match.end()
