@@ -75,6 +75,7 @@ linksid=[]
 linkvolume=[]
 linklength=[]
 linkcount=0
+
 pattern='Length'
 pattern2='RAIN2'
 pattern3='RAIN1'
@@ -84,10 +85,11 @@ pattern4='\[ORIFICES\]'
 lengthpattern=' \d+ '#(" \d+.\d ")
 lengthcheck=0
 length=[]
-row_const = 952
+
+
 
 with open(inp, 'r') as inpDeck:
-    lines = inpDeck.read()
+    #lines = inpDeck.read()
     #lines = re.findall('Length', lines)
     #print(lines)
     regex = re.compile(pattern)
@@ -95,10 +97,10 @@ with open(inp, 'r') as inpDeck:
     regex3 = re.compile(pattern3)
     regex4=re.compile(pattern4)
     regexlength=re.compile(lengthpattern)
-    #here begins an attempt at a line by line approach
-    #   for finding the length in a specific range
-    for line in lines:
-        print(line)
+
+    for line in inpDeck:
+        #print(line)
+       
         #searching for match of Length and [ORIFICES] in each line
         #   to use as conditions if pattern is found.
         match=regex.search(line)
@@ -112,32 +114,22 @@ with open(inp, 'r') as inpDeck:
         #this should find a pattern of a decimal number and a whole number
         #   and then append it to the length array. group 0
         #   should be equivelent in position to length in this pattern
-        if(lengthcheck==1):
-            #this checks for pattern of a number with a decimal or a number
-            #   with no decimal. both should have a space preceding and
-            #   after the end of the number
-            lengthmatch=regexlength.finditer(line)
-            length.append(lengthmatch.group(0))
-        
-        #check match for [ORIFICES] to signify end of relevant information to
+                #check match for [ORIFICES] to signify end of relevant information to
         #   the conduit length search. This means for loop will break
         if(match4):
             lengthcheck=0
             break
-    
-        
-    for match in regex.finditer(lines):
-        s = match.start()
-        e = match.end()
-        print(s)
-        print(e)
-        print(match.span)
-    
-    #testing for row iteration value within column 
-    for match2 in regex2.finditer(lines):
-        s2 = [match2.start(),match2.end()]
-    for match3 in regex3.finditer(lines):
-        s3 = [match3.start(),match3.end()]
+
+        if(lengthcheck==1):
+            #this checks for pattern of a number with a decimal or a number
+            #   with no decimal. both should have a space preceding and
+            #   after the end of the number
+            lengthmatch=regexlength.search(line)
+            if (lengthmatch):
+                print(lengthmatch.group(0))
+                length.append(int(lengthmatch.group(0)))
+               
+print(length)
 
 with pyswmm.Simulation(inp) as sim:
     links = pyswmm.Links(sim)
