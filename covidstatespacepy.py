@@ -66,12 +66,22 @@ D=0
 
 #str stores the string ids of all nodes found while id stores raw ids which can
 #   be used to find inflow and outflow of any give node
+#   these nodes are relative to the first nodes listed in inp
 allnodesstr=[]
 allnodesid=[] 
 nodecount=0
 
 linksstr=[]
 linksid=[]
+#below stores the string of connections of conduits
+#       all relative to the first listed conduit in inp
+linkinlets=[]
+linkoutlets=[]
+#below stores the ids of connections for conduits
+#       all relative to the first listed conduit in inp
+linkinletsid=[]
+linkoutletsid=[]
+
 linkvolume=[]
 linklength=[]
 linkcount=0
@@ -145,6 +155,16 @@ with pyswmm.Simulation(inp) as sim:
         if link.is_conduit():
             linksid.append(links[link.linkid])
             linksstr.append(link.linkid)
+            #this is section i am working on to store nodeids of
+            #   inlets and outlets
+            linkinlets.append(link.inlet_node)
+            linkoutlets.append(link.outlet_node)
+            while count<nodecount:
+                if(linkinlets[count]==allnodesstr[count]):
+                    linkinletsid.append(allnodesid[count])
+                if(linkoutlets[count]==allnodesstr[count]):
+                    linkoutletsid.append(allnodesid[count])
+                count=count+1   
             linkcount=linkcount+1
         
     print('Node count is', nodecount)
