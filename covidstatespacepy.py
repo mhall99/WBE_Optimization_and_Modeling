@@ -152,6 +152,7 @@ with pyswmm.Simulation(inp) as sim:
         allnodesstr.append(node.nodeid)
         nodecount=nodecount+1
     for link in links:
+        count = 0
         if link.is_conduit():
             linksid.append(links[link.linkid])
             linksstr.append(link.linkid)
