@@ -73,18 +73,20 @@ nodecount=0
 
 linksstr=[]
 linksid=[]
-#below stores the string of connections of conduits
+#below stores the node string of connections of conduits
 #       all relative to the first listed conduit in inp
 linkinlets=[]
 linkoutlets=[]
-#below stores the ids of connections for conduits
+#below stores the node ids of connections for conduits
 #       all relative to the first listed conduit in inp
+#       these utilizes Nodes commands not Links commands
 linkinletsid=[]
 linkoutletsid=[]
 
 linkvolume=[]
 linklength=[]
 linkcount=0
+count=0
 
 pattern='Length'
 pattern2='RAIN2'
@@ -152,20 +154,21 @@ with pyswmm.Simulation(inp) as sim:
         allnodesstr.append(node.nodeid)
         nodecount=nodecount+1
     for link in links:
-        count = 0
-        if link.is_conduit():
+        count=0
+        if link.is_conduit() :
             linksid.append(links[link.linkid])
             linksstr.append(link.linkid)
-            #this is section i am working on to store nodeids of
-            #   inlets and outlets
             linkinlets.append(link.inlet_node)
             linkoutlets.append(link.outlet_node)
-            while count<nodecount:
-                if(linkinlets[count]==allnodesstr[count]):
+            #below gives a node id relative to the string position of the
+            #   inlet outlet array.
+            while(count<nodecount):
+                if(linkinlets[linkcount]==allnodesstr[count]):
                     linkinletsid.append(allnodesid[count])
-                if(linkoutlets[count]==allnodesstr[count]):
+                    
+                if(linkoutlets[linkcount]==allnodesstr[count]):
                     linkoutletsid.append(allnodesid[count])
-                count=count+1   
+                count=count+1
             linkcount=linkcount+1
         
     print('Node count is', nodecount)
