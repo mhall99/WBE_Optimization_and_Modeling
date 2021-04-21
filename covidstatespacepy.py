@@ -188,6 +188,133 @@ def get_link_length(inp):
                     
     return length
 
+#######################################################
+#
+#   Experimentation with definitions
+#
+#######################################################
+
+
+#recursive branches function to account for branches within branches
+#   this will take a start and end node and look for all paths from start
+#   which reach the end. it will take the lengths from each conduit in those
+#   and return them in a sum total or maybe as a set of links?
+#   we are getting infinite recursion why????
+def branches(currentlink, nextnode, endnode):
+    branchcount=0
+    #need to know the position of branch in linkinlets
+    #   to be able to start from it later
+    #   think each position represent child in set of children
+    branchposition=[]
+    count=0
+    #oglink=currentlink
+    pathtoend=False
+    pathtoendcounter=0
+    sumoflengths=0
+    midsumoflengths=0
+    #count branches for current set. if only 1 path then it acts like 1 path.
+    #   if no path then everything else is skipped and function returns 0
+
+    print(nextnode.nodeid)
+    while count<linkcount:
+        #print(linkinletsid[count].nodeid)
+        if nextnode==linkinletsid[count]:
+            branchposition.append(count)
+            branchcount=branchcount+1
+        count=count+1
+            
+        
+    print(branchposition)
+    #print(branchcount)
+    #now time to check connections per each branch and any additional branches
+    #   and if those branches lead to endnode
+    x=0
+    count=0
+    #think checking for children of each child. checking for outlet of each inlet
+    while x<branchcount:
+        #we need nextnode to be reset to the child of the
+        #   current child in the set of children
+        nextnode=linkoutletsid[branchposition[x]]
+        
+        gotwhatwewanted=False
+        #here we check if the outlet has an inlet i.e child
+        count=0
+        while gotwhatwewanted==False:
+            
+            #condition for when the end node is equivelent to current node
+            #   we want to end the branch and return the sum of lengths found
+            #   along the way--------THIS CONDITION IS FUNCTIONING except maybe adding
+            if nextnode==endnode:
+                pathtoendcounter=pathtoendcounter+1
+                #make sure link is a conduit so we dont go out of bounds
+                #   for the count in length
+                print("found an end")
+                if linksid[count].is_conduit():
+                #since we break below we won't reach end of branch
+                #   where midsumoflengths is added to sumoflengths
+                #   so we need to add it here. MAYBE NOT RIGHT
+                    sumoflengths=length[count]+midsumoflengths
+                #since this is the endnode we got what we wanted from this branch
+                gotwhatwewanted=True
+                
+            #condition for when inlet is found
+            #   ----------------THIS CONDITION IS MALFUNCTIONING
+            #   This condition is being called way too often why?
+            elif linkinletsid[count]==nextnode:
+                #link with outlet at count is same as link with inlet at count
+                #   and therefore should be our current link that we get
+                #   a length from
+                currentlink=linksid[count]
+                #print(nextnode.nodeid)
+                print("found a path")
+                
+                #recursively will check for additional branches of current node
+                #   the return should be the sumoflengths and whether any path
+                #   of the recursed function had an end which was true
+                midsumoflengths,pathtoend=branches(currentlink, nextnode,endnode)
+                
+                #midsumoflengths should also be added from current conduit
+                #   and excluding nonconduits
+                #   Problem: the link between n-9 and n-14 is an orifice
+                #       and is therefore also equal to 0 meaning
+                #       that below logic would never count for 
+                if currentlink.is_conduit() and pathtoend:
+                    #reset pathtoend to false so next path can be assesses true
+                    #   or false. also add to counter
+                    pathtoendcounter=pathtoendcounter+1
+                    pathtoend=False
+                    #count should still be related to the parent i.e inlet
+                    #   of the outlet therefore count should be at right index
+                    #   for length....hopefully?
+                    midsumoflengths=length[count]+midsumoflengths
+                #since we found our first occurance of inlet and the recursion
+                #   takes care of the we got what we wanted from this branch
+                gotwhatwewanted=True
+            #condition for if the number of links is equal to the indicies
+            #   of count. 11 links counted so index 0->10 in count
+            elif (count==linkcount-1):
+                #we know there was nothing to gain from this branch
+                #   so we got what we wanted
+                print("path ended with nothing")
+                gotwhatwewanted=True
+                
+            count=count+1
+            
+            sumoflengths=midsumoflengths+sumoflengths
+    
+        x=x+1
+    #if the pathtoendcounter has incremented that means at least 1 path
+    #   has been found in the branches which is worth return a value for
+    #   making a path to end true.
+    #------------------THIS CONDITION SEEMS TO WORK
+    if pathtoendcounter > 0:
+        pathtoend=True
+    #return sumoflengths after all branches have been accounted for 
+    #   which will then be calculated to any midsumoflength
+    return sumoflengths, pathtoend
+
+
+
 
 
 
@@ -208,8 +335,12 @@ with pyswmm.Simulation(inp) as sim:
     
     nextnode=[]
     s2elength=0
+    
     nodestart=allnodesid[1]
-    nodeend=allnodesid[5]
+    endnode=allnodesid[5]
+    currentlink=linksid[1]
+    s2elength, waslegit=branches(currentlink,nodestart,endnode)
+    print(s2elength,waslegit)
     #nextnode=0
     
     #below was an intial attempt at get length of paths. realized 
@@ -342,124 +473,6 @@ with pyswmm.Simulation(inp) as sim:
 
 
 
-#######################################################
-#
-#   Experimentation with definitions
-#
-#######################################################
-
-  
-#recursive branches function to account for branches within branches
-def branches(currentlink, nextnode, endnode):
-    branchcount=0
-    #need to know the position of branch in linkinlets
-    #   to be able to start from it later
-    #   think each position represent child in set of children
-    branchposition=[]
-    count=0
-    oglink=currentlink
-    sumoflengths=0
-    midsumoflengths=0
-    #count branches for current set. if only 1 path then it acts like 1 path.
-    #   if no path then everything else is skipped and function returns 0
-    for node in linkinletsid:
-		if nextnode==node:
-            branchposition.append(count)
-			branchcount=branchcount+1
-        count=count+1
-    #now time to check connections per each branch and any additional branches
-    #   and if those branches lead to endnode
-	x=0
-    count=0
-    #think checking for children of each child. checking for outlet of each inlet
-    while x<branchcount:
-        #we need nextnode to be reset to the child of the
-        #   current child in the set of children
-        nextnode=linkoutletsid[branchposition[x]]
-        #here we check if the outlet has an inlet i.e child
-        count=0
-        while count<linkcount:
-            
-            #condition for when the end node is equivelent to current node
-            #   we want to end the branch and return the sum of lengths found
-            #   along the way
-            if nextnode==endnode:#or do i use nextnode? yes because linkoutlets[count] would cause this to interact when not desired
-                #make sure link is a conduit so we dont go out of bounds
-                #   for the count and try added that which doesn't exist
-                if linkids[count].is_conduit():
-                #since we break below we won't reach end of branch
-                #   where midsumoflengths is added to sumoflengths
-                #   so we need to add it here. 
-                    sumoflengths=length[count]+midsumoflengths
-                #break this while loop so that the next branch is calculated
-                #   and nothing else happens in this branch
-                break
-            #condition for when inlet is found i.e child of child is found
-            if linkinletsid[count]==nextnode:
-                #link with outlet at count is same as link with inlet at count
-                #   and therefore should be our current link that we get
-                #   a length from
-                currentlink=linkids[count]
-                #the nextnode here needs to then become the outlet so we can 
-                #   check if this outlet acts as an inlet(i.e has children)
-                #nextnode=linkoutletsid[count]#is this needs??????? no updates when branch is caolled??
-                
-                
-                #recursively will check for additional branches of current node
-                #   the return should be the sumoflengths of the recursed function
-                #   the result should be added to our sumlengths in this
-                #   of recursion since we know this branch for sure ended in
-                #   with appropriate value----something might be wrong here???
-                #   should it be midsumoflengths? or is there an event
-                #   midsumoflengths is fucky here
-                midsumoflengths=branches(currentlink, nextnode,endnode)+midsumoflengths
-                #midsumoflengths should also be added from current conduit
-                #   and excluding nonconduits
-                if currentlink.is_conduit() and not (midsumoflengths==0):
-                    #count should still be related to the parent i.e inlet
-                    #   of the outlet therefore count should be at right index
-                    #   for length....hopefully?
-                    midsumoflengths=length[count]+midsumoflengths
-                    
-             #if x+1=branchcount and midsumoflengths not == 0
-                 #midsumoflengths= (length of oglink)+midsumoflengths
-                 
-                 
-                #nextnode=linkoutletsid[count]
-            #does below need to be there?? probably not. should be covered
-            #   by if nextnode==endnode: at the top
-            #condition for when end node is not ever found after
-            #   the all indicies are checked
-            #if (count==linkcount-1) and not(nextnode==endnode):
-                #because the target endnode isn't ever found we have no 
-                #   interest in whatever sumsoflengths found in this branch are
-                #   therefore the midsumlengths needs to equal 0????
-                #   something fucky here too maybe?
-                #midsumoflengths=0
-                #return 0
-                #break
-            count=count+1
-            sumoflengths=midsumoflengths+sumoflengths
-            
-        #after everybranch path is resolve the midsumoflengths is added to the
-        #   whole sumoflengths. if a branch returns a 0 to its sumoflengths
-        #   then the midsumoflengths is equal to 0 and therefore doesnt
-        #   change the sumoflengths. a return of 0 means no path ended in the
-        #   end node        wrong we want it after every branch since it would
-        #       zeroed out and successful anyways. it above now
-        #sumoflengths=midsumoflengths+sumoflengths
-        
-        
-        #recursively will check for additional branches of current node
-        #   not here thoughntis was just beng held
-            #branches(currentlink,nextnode,endnode)
-        
-        
-        x=x+1
-
-    #return sumoflengths after all branches have been accounted for 
-    #   which will then be calculated to any midsumoflength
-    return sumoflengths
 
 
 
