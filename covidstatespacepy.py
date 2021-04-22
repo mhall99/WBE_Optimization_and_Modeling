@@ -421,9 +421,17 @@ with pyswmm.Simulation(inp) as sim:
         #count = 0
         #while count < nodecount:
             #this is our t from v = d/t
+            #PROBLEM WITH linksid[count]-->count is dependent on nodecount
+            #   which has a different length than linkcount and will result
+            #   in an index error
             #flowtime = lengthsfrominput[count][count+1]/linksid[count].flow
             #A should be a diagonal matrix 
             #print(flowtime)
+            #PROBLEM WITH log(No-Nt)--> No-Nt result cannot ever equal 0
+            #   else a division by 0 error occurs. Must properly update Nt
+            #   to new values during each loop before getting to here.
+            #   Also might be good to have a condition statement that checks
+            #   whether No-Nt=0 before running it so you when its the problem child
             #A[count][count] = np.log(No-Nt)/flowtime
             #count=count+1
     #now that all data is out, transpose to make data in rows related to a single node
