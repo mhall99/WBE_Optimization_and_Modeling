@@ -194,6 +194,7 @@ def get_link_length(inp):
 #   which reach the end. it returns the links with duplicates along path
 #   and whether or not there was any connecting path
 def branches(nextnode, endnode):
+    
     branchcount=0
     #need to know the position of branch in linkinlets
     #   to be able to start from it later
@@ -323,28 +324,57 @@ with pyswmm.Simulation(inp) as sim:
         totallength=x+totallength
     
     #sample for testing branches
-    s2elength=0
-    nodestart=allnodesid[0]
-    endnode=allnodesid[7]
+    #s2elength=0
+    #nodestart=allnodesid[0]
+    #endnode=allnodesid[7]
     #note: for s2elinksposition there is potential for duplicates.
     #   make sure to run this result through a remove duplicates function
     #   if you want to extract true total length from start to end
-    s2elinksposition, waslegit=branches(nodestart,endnode)
+    #s2elinksposition, waslegit=branches(nodestart,endnode)
     #this removes the duplicate occurances so that the length is calculated 
     #   properly
-    s2elinksreduced=[]
-    s2elinksreduced=[i for n,i in enumerate(s2elinksposition)
-                     if i not in s2elinksposition[:n]]
-    
+    #s2elinksreduced=[]
+    #s2elinksreduced=[i for n,i in enumerate(s2elinksposition)
+    #                 if i not in s2elinksposition[:n]]
     #adds all lengths of lengths to s2elength
-    for y in s2elinksreduced:
-        if linksid[y].is_conduit():
-            s2elength=s2elength+length[y]
-            print(linksstr[y])
+    #for y in s2elinksreduced:
+    #    if linksid[y].is_conduit():
+    #        s2elength=s2elength+length[y]
+    #        print(linksstr[y])
         #print(s2elinksposition[y].value())
-    print(s2elinksreduced,s2elength,waslegit)
+    #print(s2elinksreduced,s2elength,waslegit)
+    x=0
+    inputnodes=[]
+    lengthsfrominput=[]
     
+    #rows are each inputnode, columns are the length from inputnode
+    #   to end node corresponding to allnodesid
+    while x<nodecount:
+        inputnodes.append(allnodesid[x])
+        x=x+1
     
+        
+
+    for n in inputnodes:
+        count=0
+        placeholder=[]
+        while count<nodecount:
+            s2elength=0
+            s2epositionsreduced=[]
+            s2epositions, waslegit=branches(n,allnodesid[count])
+            s2epositionsreduced=[i for n,i in enumerate(s2epositions)
+                     if i not in s2epositions[:n]]
+            
+            for y in s2epositionsreduced:
+                if linksid[y].is_conduit():
+                    s2elength=s2elength+length[y]
+            placeholder.append(s2elength)
+            count=count+1
+        lengthsfrominput.append(placeholder)     
+    x=0        
+    while x<nodecount:
+        print(inputnodes[x].nodeid, lengthsfrominput[x])
+        x=x+1
     
     
     
@@ -380,7 +410,6 @@ with pyswmm.Simulation(inp) as sim:
         #timesteps.append(sim.current_time)
         
         count=0
-        
         placeholder=[]
         while count < nodecount:
             #creates a list of the current pollution values at each node
@@ -388,10 +417,11 @@ with pyswmm.Simulation(inp) as sim:
             count=count+1
         #applies pollution values to a new row of nodes pollution
         nodespollution.append(placeholder)
-
+        #print(nodespollution[0])
         #print(placeholder)
     #now that all data is out, transpose to make data in rows related to a single node
     nodespollution=np.transpose(nodespollution)
+
     #print(nodespollution)
 #print(timesteps)
 
