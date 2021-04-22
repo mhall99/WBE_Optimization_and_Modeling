@@ -303,9 +303,31 @@ def branches(nextnode, endnode):
     #   which will then be calculated to any midsumoflength
     return allfoundlinks, pathtoend
 
-
-
-
+#rows are each inputnode, columns are the length from inputnode
+#   to end node corresponding to allnodesid.
+#   this yields an m allnodesid by n allnodesid table of lengths from m->n
+def allpathlengths(nodeids):
+    x=0
+    for n in nodeids:
+        count=0
+        placeholder=[]
+        while count<nodecount:
+            s2elength=0
+            s2epositionsreduced=[]
+            s2epositions, waslegit=branches(n,nodeids[count])
+            s2epositionsreduced=[i for n,i in enumerate(s2epositions)
+                     if i not in s2epositions[:n]]       
+            for y in s2epositionsreduced:
+                if linksid[y].is_conduit():
+                    s2elength=s2elength+length[y]
+            placeholder.append(s2elength)
+            count=count+1
+        lengthsfrominput.append(placeholder)     
+    x=0        
+    while x<nodecount:
+        print(nodeids[x].nodeid, lengthsfrominput[x])
+        x=x+1
+    return lengthsfrominput
 
 
 nodespollution=[]
@@ -347,34 +369,8 @@ with pyswmm.Simulation(inp) as sim:
     inputnodes=[]
     lengthsfrominput=[]
     
-    #rows are each inputnode, columns are the length from inputnode
-    #   to end node corresponding to allnodesid
-    while x<nodecount:
-        inputnodes.append(allnodesid[x])
-        x=x+1
     
-        
-
-    for n in inputnodes:
-        count=0
-        placeholder=[]
-        while count<nodecount:
-            s2elength=0
-            s2epositionsreduced=[]
-            s2epositions, waslegit=branches(n,allnodesid[count])
-            s2epositionsreduced=[i for n,i in enumerate(s2epositions)
-                     if i not in s2epositions[:n]]
-            
-            for y in s2epositionsreduced:
-                if linksid[y].is_conduit():
-                    s2elength=s2elength+length[y]
-            placeholder.append(s2elength)
-            count=count+1
-        lengthsfrominput.append(placeholder)     
-    x=0        
-    while x<nodecount:
-        print(inputnodes[x].nodeid, lengthsfrominput[x])
-        x=x+1
+    lengthsfrominput=allpathlengths(allnodesid)
     
     
     
