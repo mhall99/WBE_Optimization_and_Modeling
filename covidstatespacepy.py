@@ -188,12 +188,6 @@ def get_link_length(inp):
                     
     return length
 
-#######################################################
-#
-#   Experimentation with definitions
-#
-#######################################################
-
 
 #recursive branches function to account for branches within branches
 #   this will take a start and end node and look for all paths from start
@@ -208,7 +202,7 @@ def branches(nextnode, endnode):
     count=0
     pathtoend=False
     pathtoendcounter=0
-    nodeofpath=nextnode
+    #nodeofpath=nextnode
     #count branches for current set. if only 1 path then it acts like 1 path.
     #   if no path then everything else is skipped and function returns 0
     #print(nextnode.nodeid)
@@ -232,9 +226,9 @@ def branches(nextnode, endnode):
         #   current child in the set of children
         nextnode=linkoutletsid[branchposition[x]]
         
-        currentlink=linksid[branchposition[x]].linkid
-        print("branch for", nodeofpath.nodeid,"->", nextnode.nodeid,
-              "has link", currentlink,"at position", branchposition[x])
+        #currentlink=linksid[branchposition[x]].linkid
+        #print("branch for", nodeofpath.nodeid,"->", nextnode.nodeid,
+        #     "has link", currentlink,"at position", branchposition[x])
         gotwhatwewanted=False
         #here we check if the outlet has an inlet i.e child
         count=0
@@ -245,8 +239,8 @@ def branches(nextnode, endnode):
             if (nextnode==endnode):
                 pathtoendcounter=pathtoendcounter+1
                 
-                print("found an end", nodeofpath.nodeid,"->", nextnode.nodeid,
-                      "current link", currentlink,"at position", branchposition[x])
+                #print("found an end", nodeofpath.nodeid,"->", nextnode.nodeid,
+                #     "current link", currentlink,"at position", branchposition[x])
                 allfoundlinks.append(branchposition[x])
                 #if linksid[count].is_conduit():
                     #or is it currentlink= linksid[count] and then
@@ -278,7 +272,7 @@ def branches(nextnode, endnode):
                     #   or false. also add to counter
                     pathtoendcounter=pathtoendcounter+1
                     pathtoend=False
-                    print("true path branch position",branchposition[x])
+                    #print("true path branch position",branchposition[x])
                     for y in currentlinks:
                         allfoundlinks.append(y)
                     allfoundlinks.append(branchposition[x])
@@ -330,20 +324,25 @@ with pyswmm.Simulation(inp) as sim:
     
     #sample for testing branches
     s2elength=0
-    nodestart=allnodesid[1]
+    nodestart=allnodesid[0]
     endnode=allnodesid[7]
     #note: for s2elinksposition there is potential for duplicates.
-    #   make sure to run this result through a remove_duplicates function
+    #   make sure to run this result through a remove duplicates function
     #   if you want to extract true total length from start to end
     s2elinksposition, waslegit=branches(nodestart,endnode)
-    for y in s2elinksposition:
+    #this removes the duplicate occurances so that the length is calculated 
+    #   properly
+    s2elinksreduced=[]
+    s2elinksreduced=[i for n,i in enumerate(s2elinksposition)
+                     if i not in s2elinksposition[:n]]
+    
+    #adds all lengths of lengths to s2elength
+    for y in s2elinksreduced:
         if linksid[y].is_conduit():
             s2elength=s2elength+length[y]
             print(linksstr[y])
         #print(s2elinksposition[y].value())
-    print(s2elinksposition,s2elength,waslegit)
-    
-    
+    print(s2elinksreduced,s2elength,waslegit)
     
     
     
@@ -373,7 +372,6 @@ with pyswmm.Simulation(inp) as sim:
     
     
     
-    
     #steps through the simulation and allows for information to be gathered
     # at each step of the simulation
     for step in sim:
@@ -383,17 +381,18 @@ with pyswmm.Simulation(inp) as sim:
         
         count=0
         
-        
+        placeholder=[]
         while count < nodecount:
             #creates a list of the current pollution values at each node
             placeholder.append(list(allnodesid[count].pollut_quality.values())[0])
             count=count+1
         #applies pollution values to a new row of nodes pollution
         nodespollution.append(placeholder)
-        placeholder=[]
-    
+
+        #print(placeholder)
     #now that all data is out, transpose to make data in rows related to a single node
-    #nodespollution=np.transpose(nodespollution)
+    nodespollution=np.transpose(nodespollution)
+    #print(nodespollution)
 #print(timesteps)
 
     #print(pollution[0])
