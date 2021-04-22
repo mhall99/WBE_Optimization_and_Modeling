@@ -383,8 +383,7 @@ with pyswmm.Simulation(inp) as sim:
 
      
 
-    n = totallength/10 #number of states in the system
-    n=int(n)
+    n = nodecount #number of states in the system
     m = 2 #number of inputs
     
     #input output matrices which are constant for now. may change if we make
@@ -407,6 +406,7 @@ with pyswmm.Simulation(inp) as sim:
         
         count=0
         placeholder=[]
+        print(linksid[0].flow)
         while count < nodecount:
             #creates a list of the current pollution values at each node
             placeholder.append(list(allnodesid[count].pollut_quality.values())[0])
@@ -415,6 +415,17 @@ with pyswmm.Simulation(inp) as sim:
         nodespollution.append(placeholder)
         #print(nodespollution[0])
         #print(placeholder)
+        
+        ## STUFF FOR A MATRIX 
+        
+        #count = 0
+        #while count < nodecount:
+            #this is our t from v = d/t
+            #flowtime = lengthsfrominput[count][count+1]/linksid[count].flow
+            #A should be a diagonal matrix 
+            #print(flowtime)
+            #A[count][count] = np.log(No-Nt)/flowtime
+            #count=count+1
     #now that all data is out, transpose to make data in rows related to a single node
     nodespollution=np.transpose(nodespollution)
 
@@ -427,7 +438,13 @@ with pyswmm.Simulation(inp) as sim:
 #print(nodespollution)
 
 
+#k represents the half-life/viral decay.
+#k=np.log(No-Nt)/flowtime
 
+#Nt = No**(k*flowtime)#update Nt to proper viral volume for next iteration
+#c1c2.flow
+
+#flowtime11 = lengthsfrominput[0][1]/linksid[0].flow
 
 
 
