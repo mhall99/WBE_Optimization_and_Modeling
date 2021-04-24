@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt  # Module for plotting
 import scipy.signal as signal
 import numpy as np
 import re
-
+import sippy as sp
 # ***********************************************************************
 #  Declaration of simulation files and variables
 # ***********************************************************************
@@ -344,7 +344,6 @@ timesteps=[]
 with pyswmm.Simulation(inp) as sim:
     links = pyswmm.Links(sim)
     nodes = pyswmm.Nodes(sim)
-    systemrouting=pyswmm.SystemStats(sim)
     
     
     get_nodes_and_links(links, nodes)
@@ -404,6 +403,7 @@ with pyswmm.Simulation(inp) as sim:
     
     
 
+    systemrouting=pyswmm.SystemStats(sim)
     
     #steps through the simulation and allows for information to be gathered
     #   at each step of the simulation
@@ -419,10 +419,7 @@ with pyswmm.Simulation(inp) as sim:
         while count < nodecount:
             #creates a list of the current pollution values at each node
             placeholder.append(list(allnodesid[count].pollut_quality.values())[0])
-            if allnodesid[count].lateral_inflow>0:
-                pholder2.append(193500/allnodesid[count].lateral_inflow)
-            else:
-                pholder2.append(allnodesid[count].lateral_inflow)
+            pholder2.append(allnodesid[count].lateral_inflow)
             count=count+1
         #applies pollution values to a new row of nodes pollution
         nodespollution.append(placeholder)
@@ -477,34 +474,30 @@ while(count<len(nodesinflow)):
     U.append(nodesinflow[count])
     count=count+60
 
-        
-        
 #a_file.close()
+U=np.transpose(U)
 
 
-
-    #print(pollution[0])
-        #placeholder=list(allnodesid[0].pollut_quality.values())[0]
-        #print(placeholder)
+#print(pollution[0])
+#placeholder=list(allnodesid[0].pollut_quality.values())[0]
+#print(placeholder)
 #print(nodespollution)
 
 
+method='N4SID'
+ts=100
+count1=80
+count2=80
+count3=80
+
+id_sys=sp.system_identification(Y, U, method, SS_f=count1, SS_p=count2,
+                                SS_fixed_order=count3, tsample=ts, SS_A_stability=False)
 
 
 
 
-#subcatchment stuff in case we want it
-#subcatchments=pyswmm.Subcatchments(sim)
-#subbiesid=[]
-#subbies=[]
-#subbiesoutlets=[]    
-    #for subcatchment in subcatchments:
-    #   subbiesid.append(subcatchment)
-    #   subbies.append(subcatchment.subcatchmentid)
-    #   subbiesoutlets.append(subcatchment.connection)
 
 
 
-#python dict function to store all our list and big data. savable into a json.
-#django web server. has a data model which stores all componenets and measurements
-#   possibly use to organziealll data. django
+
+
