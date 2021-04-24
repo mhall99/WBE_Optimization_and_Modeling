@@ -15,7 +15,7 @@ START_DATE           04/13/2021
 START_TIME           00:00:00
 REPORT_START_DATE    04/13/2021
 REPORT_START_TIME    00:00:00
-END_DATE             04/15/2021
+END_DATE             04/18/2021
 END_TIME             23:30:00
 SWEEP_START          12/01
 SWEEP_END            12/31
@@ -147,13 +147,48 @@ covid-protein    #/L    0.0        0.0        0.0        2.796      NO         *
 [INFLOWS]
 ;;Node           Constituent      Time Series      Type     Mfactor  Sfactor  Baseline Pattern
 ;;-------------- ---------------- ---------------- -------- -------- -------- -------- --------
-N-6              FLOW             dryflow3days     FLOW     1.0      1.0      1       
+N-5              FLOW             dryflow6days     FLOW     1.0      1.0      1       
+N-6              FLOW             dryflow6days     FLOW     1.0      1.0      1       
+N-7              FLOW             dryflow6days     FLOW     1.0      1.0      1       
+N-9              FLOW             dryflow6days     FLOW     1.0      1.0      1       
+N-13             FLOW             dryflow6days     FLOW     1.0      1.0      1       
+N-14             FLOW             dryflow6days     FLOW     1.0      1.0      1       
+N-15             FLOW             dryflow6days     FLOW     1.0      1.0      1       
+DES-1            FLOW             dryflow6days     FLOW     1.0      1.0      1       
+DES-2            FLOW             dryflow6days     FLOW     1.0      1.0      1       
+DES-3            FLOW             dryflow6days     FLOW     1.0      1.0      1       
+V-1              FLOW             dryflow6days     FLOW     1.0      1.0      1       
+V-2              FLOW             dryflow6days     FLOW     1.0      1.0      1       
+V-3              FLOW             dryflow6days     FLOW     1.0      1.0      1       
 
 [DWF]
 ;;Node           Constituent      Baseline   Patterns  
 ;;-------------- ---------------- ---------- ----------
+N-5              FLOW             1          "" "" ""
+N-5              covid-protein    1935000    "" "" ""
 N-6              FLOW             1          "" ""
 N-6              covid-protein    1935000    "" ""
+N-7              FLOW             1          "" "" ""
+N-7              covid-protein    1935000    "" "" ""
+N-9              FLOW             1          "" "" ""
+N-9              covid-protein    1935000    "" "" ""
+N-13             FLOW             1          "" "" ""
+N-13             covid-protein    1935000    "" "" ""
+N-14             FLOW             1          "" "" ""
+N-14             covid-protein    1935000    "" "" ""
+N-15             FLOW             1          "" "" ""
+N-15             covid-protein    1935000    "" "" ""
+DES-1            FLOW             1          "" "" ""
+DES-1            covid-protein    1935000    "" "" ""
+DES-2            FLOW             1          "" "" ""
+DES-2            covid-protein    1935000    "" "" ""
+DES-3            FLOW             1          "" "" ""
+DES-3            covid-protein    1935000    "" "" ""
+V-1              FLOW             1          "" "" ""
+V-1              covid-protein    1935000    "" "" ""
+V-2              FLOW             1          "" "" ""
+V-2              covid-protein    1935000    "" "" ""
+V-3              FLOW             1          "" "" ""
 
 [CURVES]
 ;;Name           Type       X-Value    Y-Value   
@@ -499,6 +534,440 @@ dryflow3days     4/18/2021  22:00      19
 dryflow3days     4/18/2021  22:30      16        
 dryflow3days     4/18/2021  23:00      9         
 dryflow3days     4/18/2021  23:30      9         
+;
+dryflow6days     4/13/2021  0:00       1         
+dryflow6days     4/13/2021  0:30       23        
+dryflow6days     4/13/2021  1:00       18        
+dryflow6days     4/13/2021  1:30       7         
+dryflow6days     4/13/2021  2:00       26        
+dryflow6days     4/13/2021  2:30       14        
+dryflow6days     4/13/2021  3:00       13        
+dryflow6days     4/13/2021  3:30       1         
+dryflow6days     4/13/2021  4:00       10        
+dryflow6days     4/13/2021  4:30       22        
+dryflow6days     4/13/2021  5:00       13        
+dryflow6days     4/13/2021  5:30       10        
+dryflow6days     4/13/2021  6:00       5         
+dryflow6days     4/13/2021  6:30       10        
+dryflow6days     4/13/2021  7:00       28        
+dryflow6days     4/13/2021  7:30       24        
+dryflow6days     4/13/2021  8:00       21        
+dryflow6days     4/13/2021  8:30       21        
+dryflow6days     4/13/2021  9:00       14        
+dryflow6days     4/13/2021  9:30       11        
+dryflow6days     4/13/2021  10:00      30        
+dryflow6days     4/13/2021  10:30      17        
+dryflow6days     4/13/2021  11:00      24        
+dryflow6days     4/13/2021  11:30      21        
+dryflow6days     4/13/2021  12:00      17        
+dryflow6days     4/13/2021  12:30      8         
+dryflow6days     4/13/2021  13:00      8         
+dryflow6days     4/13/2021  13:30      0         
+dryflow6days     4/13/2021  14:00      10        
+dryflow6days     4/13/2021  14:30      6         
+dryflow6days     4/13/2021  15:00      3         
+dryflow6days     4/13/2021  15:30      19        
+dryflow6days     4/13/2021  16:00      1         
+dryflow6days     4/13/2021  16:30      14        
+dryflow6days     4/13/2021  17:00      30        
+dryflow6days     4/13/2021  17:30      18        
+dryflow6days     4/13/2021  18:00      5         
+dryflow6days     4/13/2021  18:30      6         
+dryflow6days     4/13/2021  19:00      3         
+dryflow6days     4/13/2021  19:30      23        
+dryflow6days     4/13/2021  20:00      2         
+dryflow6days     4/13/2021  20:30      10        
+dryflow6days     4/13/2021  21:00      22        
+dryflow6days     4/13/2021  21:30      0         
+dryflow6days     4/13/2021  22:00      8         
+dryflow6days     4/13/2021  22:30      30        
+dryflow6days     4/13/2021  23:00      5         
+dryflow6days     4/13/2021  23:30      20        
+dryflow6days     4/14/2021  0:00       8         
+dryflow6days     4/14/2021  0:30       29        
+dryflow6days     4/14/2021  1:00       23        
+dryflow6days     4/14/2021  1:30       27        
+dryflow6days     4/14/2021  2:00       1         
+dryflow6days     4/14/2021  2:30       26        
+dryflow6days     4/14/2021  3:00       25        
+dryflow6days     4/14/2021  3:30       19        
+dryflow6days     4/14/2021  4:00       27        
+dryflow6days     4/14/2021  4:30       22        
+dryflow6days     4/14/2021  5:00       23        
+dryflow6days     4/14/2021  5:30       20        
+dryflow6days     4/14/2021  6:00       1         
+dryflow6days     4/14/2021  6:30       8         
+dryflow6days     4/14/2021  7:00       11        
+dryflow6days     4/14/2021  7:30       1         
+dryflow6days     4/14/2021  8:00       29        
+dryflow6days     4/14/2021  8:30       24        
+dryflow6days     4/14/2021  9:00       26        
+dryflow6days     4/14/2021  9:30       9         
+dryflow6days     4/14/2021  10:00      6         
+dryflow6days     4/14/2021  10:30      9         
+dryflow6days     4/14/2021  11:00      9         
+dryflow6days     4/14/2021  11:30      30        
+dryflow6days     4/14/2021  12:00      8         
+dryflow6days     4/14/2021  12:30      2         
+dryflow6days     4/14/2021  13:00      19        
+dryflow6days     4/14/2021  13:30      5         
+dryflow6days     4/14/2021  14:00      19        
+dryflow6days     4/14/2021  14:30      17        
+dryflow6days     4/14/2021  15:00      21        
+dryflow6days     4/14/2021  15:30      23        
+dryflow6days     4/14/2021  16:00      20        
+dryflow6days     4/14/2021  16:30      30        
+dryflow6days     4/14/2021  17:00      5         
+dryflow6days     4/14/2021  17:30      15        
+dryflow6days     4/14/2021  18:00      30        
+dryflow6days     4/14/2021  18:30      6         
+dryflow6days     4/14/2021  19:00      19        
+dryflow6days     4/14/2021  19:30      5         
+dryflow6days     4/14/2021  20:00      0         
+dryflow6days     4/14/2021  20:30      15        
+dryflow6days     4/14/2021  21:00      23        
+dryflow6days     4/14/2021  21:30      22        
+dryflow6days     4/14/2021  22:00      25        
+dryflow6days     4/14/2021  22:30      0         
+dryflow6days     4/14/2021  23:00      4         
+dryflow6days     4/14/2021  23:30      28        
+dryflow6days     4/15/2021  0:00       27        
+dryflow6days     4/15/2021  0:30       16        
+dryflow6days     4/15/2021  1:00       15        
+dryflow6days     4/15/2021  1:30       19        
+dryflow6days     4/15/2021  2:00       13        
+dryflow6days     4/15/2021  2:30       10        
+dryflow6days     4/15/2021  3:00       18        
+dryflow6days     4/15/2021  3:30       20        
+dryflow6days     4/15/2021  4:00       18        
+dryflow6days     4/15/2021  4:30       24        
+dryflow6days     4/15/2021  5:00       30        
+dryflow6days     4/15/2021  5:30       26        
+dryflow6days     4/15/2021  6:00       5         
+dryflow6days     4/15/2021  6:30       17        
+dryflow6days     4/15/2021  7:00       20        
+dryflow6days     4/15/2021  7:30       3         
+dryflow6days     4/15/2021  8:00       6         
+dryflow6days     4/15/2021  8:30       28        
+dryflow6days     4/15/2021  9:00       21        
+dryflow6days     4/15/2021  9:30       3         
+dryflow6days     4/15/2021  10:00      24        
+dryflow6days     4/15/2021  10:30      27        
+dryflow6days     4/15/2021  11:00      26        
+dryflow6days     4/15/2021  11:30      8         
+dryflow6days     4/15/2021  12:00      18        
+dryflow6days     4/15/2021  12:30      8         
+dryflow6days     4/15/2021  13:00      3         
+dryflow6days     4/15/2021  13:30      18        
+dryflow6days     4/15/2021  14:00      21        
+dryflow6days     4/15/2021  14:30      15        
+dryflow6days     4/15/2021  15:00      14        
+dryflow6days     4/15/2021  15:30      6         
+dryflow6days     4/15/2021  16:00      11        
+dryflow6days     4/15/2021  16:30      11        
+dryflow6days     4/15/2021  17:00      25        
+dryflow6days     4/15/2021  17:30      23        
+dryflow6days     4/15/2021  18:00      30        
+dryflow6days     4/15/2021  18:30      12        
+dryflow6days     4/15/2021  19:00      23        
+dryflow6days     4/15/2021  19:30      5         
+dryflow6days     4/15/2021  20:00      24        
+dryflow6days     4/15/2021  20:30      22        
+dryflow6days     4/15/2021  21:00      6         
+dryflow6days     4/15/2021  21:30      23        
+dryflow6days     4/15/2021  22:00      26        
+dryflow6days     4/15/2021  22:30      3         
+dryflow6days     4/15/2021  23:00      10        
+dryflow6days     4/15/2021  23:30      18        
+dryflow6days     4/16/2021  0:00       16        
+dryflow6days     4/16/2021  0:30       17        
+dryflow6days     4/16/2021  1:00       11        
+dryflow6days     4/16/2021  1:30       17        
+dryflow6days     4/16/2021  2:00       4         
+dryflow6days     4/16/2021  2:30       17        
+dryflow6days     4/16/2021  3:00       7         
+dryflow6days     4/16/2021  3:30       2         
+dryflow6days     4/16/2021  4:00       11        
+dryflow6days     4/16/2021  4:30       2         
+dryflow6days     4/16/2021  5:00       19        
+dryflow6days     4/16/2021  5:30       12        
+dryflow6days     4/16/2021  6:00       0         
+dryflow6days     4/16/2021  6:30       11        
+dryflow6days     4/16/2021  7:00       3         
+dryflow6days     4/16/2021  7:30       4         
+dryflow6days     4/16/2021  8:00       6         
+dryflow6days     4/16/2021  8:30       9         
+dryflow6days     4/16/2021  9:00       8         
+dryflow6days     4/16/2021  9:30       18        
+dryflow6days     4/16/2021  10:00      12        
+dryflow6days     4/16/2021  10:30      11        
+dryflow6days     4/16/2021  11:00      10        
+dryflow6days     4/16/2021  11:30      18        
+dryflow6days     4/16/2021  12:00      13        
+dryflow6days     4/16/2021  12:30      6         
+dryflow6days     4/16/2021  13:00      10        
+dryflow6days     4/16/2021  13:30      13        
+dryflow6days     4/16/2021  14:00      1         
+dryflow6days     4/16/2021  14:30      3         
+dryflow6days     4/16/2021  15:00      13        
+dryflow6days     4/16/2021  15:30      18        
+dryflow6days     4/16/2021  16:00      0         
+dryflow6days     4/16/2021  16:30      5         
+dryflow6days     4/16/2021  17:00      7         
+dryflow6days     4/16/2021  17:30      15        
+dryflow6days     4/16/2021  18:00      1         
+dryflow6days     4/16/2021  18:30      18        
+dryflow6days     4/16/2021  19:00      8         
+dryflow6days     4/16/2021  19:30      5         
+dryflow6days     4/16/2021  20:00      3         
+dryflow6days     4/16/2021  20:30      16        
+dryflow6days     4/16/2021  21:00      16        
+dryflow6days     4/16/2021  21:30      16        
+dryflow6days     4/16/2021  22:00      2         
+dryflow6days     4/16/2021  22:30      12        
+dryflow6days     4/16/2021  23:00      17        
+dryflow6days     4/16/2021  23:30      1         
+dryflow6days     4/17/2021  0:00       9         
+dryflow6days     4/17/2021  0:30       15        
+dryflow6days     4/17/2021  1:00       4         
+dryflow6days     4/17/2021  1:30       6         
+dryflow6days     4/17/2021  2:00       1         
+dryflow6days     4/17/2021  2:30       15        
+dryflow6days     4/17/2021  3:00       6         
+dryflow6days     4/17/2021  3:30       4         
+dryflow6days     4/17/2021  4:00       6         
+dryflow6days     4/17/2021  4:30       14        
+dryflow6days     4/17/2021  5:00       2         
+dryflow6days     4/17/2021  5:30       16        
+dryflow6days     4/17/2021  6:00       19        
+dryflow6days     4/17/2021  6:30       13        
+dryflow6days     4/17/2021  7:00       8         
+dryflow6days     4/17/2021  7:30       19        
+dryflow6days     4/17/2021  8:00       17        
+dryflow6days     4/17/2021  8:30       6         
+dryflow6days     4/17/2021  9:00       15        
+dryflow6days     4/17/2021  9:30       7         
+dryflow6days     4/17/2021  10:00      8         
+dryflow6days     4/17/2021  10:30      13        
+dryflow6days     4/17/2021  11:00      0         
+dryflow6days     4/17/2021  11:30      5         
+dryflow6days     4/17/2021  12:00      17        
+dryflow6days     4/17/2021  12:30      7         
+dryflow6days     4/17/2021  13:00      12        
+dryflow6days     4/17/2021  13:30      0         
+dryflow6days     4/17/2021  14:00      3         
+dryflow6days     4/17/2021  14:30      17        
+dryflow6days     4/17/2021  15:00      11        
+dryflow6days     4/17/2021  15:30      3         
+dryflow6days     4/17/2021  16:00      12        
+dryflow6days     4/17/2021  16:30      1         
+dryflow6days     4/17/2021  17:00      10        
+dryflow6days     4/17/2021  17:30      15        
+dryflow6days     4/17/2021  18:00      12        
+dryflow6days     4/17/2021  18:30      12        
+dryflow6days     4/17/2021  19:00      15        
+dryflow6days     4/17/2021  19:30      11        
+dryflow6days     4/17/2021  20:00      17        
+dryflow6days     4/17/2021  20:30      12        
+dryflow6days     4/17/2021  21:00      2         
+dryflow6days     4/17/2021  21:30      15        
+dryflow6days     4/17/2021  22:00      10        
+dryflow6days     4/17/2021  22:30      8         
+dryflow6days     4/17/2021  23:00      14        
+dryflow6days     4/17/2021  23:30      14        
+dryflow6days     4/18/2021  0:00       11        
+dryflow6days     4/18/2021  0:30       7         
+dryflow6days     4/18/2021  1:00       19        
+dryflow6days     4/18/2021  1:30       8         
+dryflow6days     4/18/2021  2:00       15        
+dryflow6days     4/18/2021  2:30       7         
+dryflow6days     4/18/2021  3:00       14        
+dryflow6days     4/18/2021  3:30       8         
+dryflow6days     4/18/2021  4:00       7         
+dryflow6days     4/18/2021  4:30       9         
+dryflow6days     4/18/2021  5:00       1         
+dryflow6days     4/18/2021  5:30       3         
+dryflow6days     4/18/2021  6:00       8         
+dryflow6days     4/18/2021  6:30       7         
+dryflow6days     4/18/2021  7:00       9         
+dryflow6days     4/18/2021  7:30       16        
+dryflow6days     4/18/2021  8:00       13        
+dryflow6days     4/18/2021  8:30       16        
+dryflow6days     4/18/2021  9:00       2         
+dryflow6days     4/18/2021  9:30       6         
+dryflow6days     4/18/2021  10:00      1         
+dryflow6days     4/18/2021  10:30      16        
+dryflow6days     4/18/2021  11:00      3         
+dryflow6days     4/18/2021  11:30      1         
+dryflow6days     4/18/2021  12:00      4         
+dryflow6days     4/18/2021  12:30      1         
+dryflow6days     4/18/2021  13:00      3         
+dryflow6days     4/18/2021  13:30      0         
+dryflow6days     4/18/2021  14:00      3         
+dryflow6days     4/18/2021  14:30      6         
+dryflow6days     4/18/2021  15:00      15        
+dryflow6days     4/18/2021  15:30      11        
+dryflow6days     4/18/2021  16:00      5         
+dryflow6days     4/18/2021  16:30      17        
+dryflow6days     4/18/2021  17:00      5         
+dryflow6days     4/18/2021  17:30      11        
+dryflow6days     4/18/2021  18:00      13        
+dryflow6days     4/18/2021  18:30      7         
+dryflow6days     4/18/2021  19:00      7         
+dryflow6days     4/18/2021  19:30      4         
+dryflow6days     4/18/2021  20:00      7         
+dryflow6days     4/18/2021  20:30      16        
+dryflow6days     4/18/2021  21:00      7         
+dryflow6days     4/18/2021  21:30      18        
+dryflow6days     4/18/2021  22:00      19        
+dryflow6days     4/18/2021  22:30      16        
+dryflow6days     4/18/2021  23:00      9         
+dryflow6days     4/18/2021  23:30      9         
+;
+dryflow3days2    4/16/2021  0:00       16        
+dryflow3days2    4/16/2021  0:30       17        
+dryflow3days2    4/16/2021  1:00       11        
+dryflow3days2    4/16/2021  1:30       17        
+dryflow3days2    4/16/2021  2:00       4         
+dryflow3days2    4/16/2021  2:30       17        
+dryflow3days2    4/16/2021  3:00       7         
+dryflow3days2    4/16/2021  3:30       2         
+dryflow3days2    4/16/2021  4:00       11        
+dryflow3days2    4/16/2021  4:30       2         
+dryflow3days2    4/16/2021  5:00       19        
+dryflow3days2    4/16/2021  5:30       12        
+dryflow3days2    4/16/2021  6:00       0         
+dryflow3days2    4/16/2021  6:30       11        
+dryflow3days2    4/16/2021  7:00       3         
+dryflow3days2    4/16/2021  7:30       4         
+dryflow3days2    4/16/2021  8:00       6         
+dryflow3days2    4/16/2021  8:30       9         
+dryflow3days2    4/16/2021  9:00       8         
+dryflow3days2    4/16/2021  9:30       18        
+dryflow3days2    4/16/2021  10:00      12        
+dryflow3days2    4/16/2021  10:30      11        
+dryflow3days2    4/16/2021  11:00      10        
+dryflow3days2    4/16/2021  11:30      18        
+dryflow3days2    4/16/2021  12:00      13        
+dryflow3days2    4/16/2021  12:30      6         
+dryflow3days2    4/16/2021  13:00      10        
+dryflow3days2    4/16/2021  13:30      13        
+dryflow3days2    4/16/2021  14:00      1         
+dryflow3days2    4/16/2021  14:30      3         
+dryflow3days2    4/16/2021  15:00      13        
+dryflow3days2    4/16/2021  15:30      18        
+dryflow3days2    4/16/2021  16:00      0         
+dryflow3days2    4/16/2021  16:30      5         
+dryflow3days2    4/16/2021  17:00      7         
+dryflow3days2    4/16/2021  17:30      15        
+dryflow3days2    4/16/2021  18:00      1         
+dryflow3days2    4/16/2021  18:30      18        
+dryflow3days2    4/16/2021  19:00      8         
+dryflow3days2    4/16/2021  19:30      5         
+dryflow3days2    4/16/2021  20:00      3         
+dryflow3days2    4/16/2021  20:30      16        
+dryflow3days2    4/16/2021  21:00      16        
+dryflow3days2    4/16/2021  21:30      16        
+dryflow3days2    4/16/2021  22:00      2         
+dryflow3days2    4/16/2021  22:30      12        
+dryflow3days2    4/16/2021  23:00      17        
+dryflow3days2    4/16/2021  23:30      1         
+dryflow3days2    4/17/2021  0:00       9         
+dryflow3days2    4/17/2021  0:30       15        
+dryflow3days2    4/17/2021  1:00       4         
+dryflow3days2    4/17/2021  1:30       6         
+dryflow3days2    4/17/2021  2:00       1         
+dryflow3days2    4/17/2021  2:30       15        
+dryflow3days2    4/17/2021  3:00       6         
+dryflow3days2    4/17/2021  3:30       4         
+dryflow3days2    4/17/2021  4:00       6         
+dryflow3days2    4/17/2021  4:30       14        
+dryflow3days2    4/17/2021  5:00       2         
+dryflow3days2    4/17/2021  5:30       16        
+dryflow3days2    4/17/2021  6:00       19        
+dryflow3days2    4/17/2021  6:30       13        
+dryflow3days2    4/17/2021  7:00       8         
+dryflow3days2    4/17/2021  7:30       19        
+dryflow3days2    4/17/2021  8:00       17        
+dryflow3days2    4/17/2021  8:30       6         
+dryflow3days2    4/17/2021  9:00       15        
+dryflow3days2    4/17/2021  9:30       7         
+dryflow3days2    4/17/2021  10:00      8         
+dryflow3days2    4/17/2021  10:30      13        
+dryflow3days2    4/17/2021  11:00      0         
+dryflow3days2    4/17/2021  11:30      5         
+dryflow3days2    4/17/2021  12:00      17        
+dryflow3days2    4/17/2021  12:30      7         
+dryflow3days2    4/17/2021  13:00      12        
+dryflow3days2    4/17/2021  13:30      0         
+dryflow3days2    4/17/2021  14:00      3         
+dryflow3days2    4/17/2021  14:30      17        
+dryflow3days2    4/17/2021  15:00      11        
+dryflow3days2    4/17/2021  15:30      3         
+dryflow3days2    4/17/2021  16:00      12        
+dryflow3days2    4/17/2021  16:30      1         
+dryflow3days2    4/17/2021  17:00      10        
+dryflow3days2    4/17/2021  17:30      15        
+dryflow3days2    4/17/2021  18:00      12        
+dryflow3days2    4/17/2021  18:30      12        
+dryflow3days2    4/17/2021  19:00      15        
+dryflow3days2    4/17/2021  19:30      11        
+dryflow3days2    4/17/2021  20:00      17        
+dryflow3days2    4/17/2021  20:30      12        
+dryflow3days2    4/17/2021  21:00      2         
+dryflow3days2    4/17/2021  21:30      15        
+dryflow3days2    4/17/2021  22:00      10        
+dryflow3days2    4/17/2021  22:30      8         
+dryflow3days2    4/17/2021  23:00      14        
+dryflow3days2    4/17/2021  23:30      14        
+dryflow3days2    4/18/2021  0:00       11        
+dryflow3days2    4/18/2021  0:30       7         
+dryflow3days2    4/18/2021  1:00       19        
+dryflow3days2    4/18/2021  1:30       8         
+dryflow3days2    4/18/2021  2:00       15        
+dryflow3days2    4/18/2021  2:30       7         
+dryflow3days2    4/18/2021  3:00       14        
+dryflow3days2    4/18/2021  3:30       8         
+dryflow3days2    4/18/2021  4:00       7         
+dryflow3days2    4/18/2021  4:30       9         
+dryflow3days2    4/18/2021  5:00       1         
+dryflow3days2    4/18/2021  5:30       3         
+dryflow3days2    4/18/2021  6:00       8         
+dryflow3days2    4/18/2021  6:30       7         
+dryflow3days2    4/18/2021  7:00       9         
+dryflow3days2    4/18/2021  7:30       16        
+dryflow3days2    4/18/2021  8:00       13        
+dryflow3days2    4/18/2021  8:30       16        
+dryflow3days2    4/18/2021  9:00       2         
+dryflow3days2    4/18/2021  9:30       6         
+dryflow3days2    4/18/2021  10:00      1         
+dryflow3days2    4/18/2021  10:30      16        
+dryflow3days2    4/18/2021  11:00      3         
+dryflow3days2    4/18/2021  11:30      1         
+dryflow3days2    4/18/2021  12:00      4         
+dryflow3days2    4/18/2021  12:30      1         
+dryflow3days2    4/18/2021  13:00      3         
+dryflow3days2    4/18/2021  13:30      0         
+dryflow3days2    4/18/2021  14:00      3         
+dryflow3days2    4/18/2021  14:30      6         
+dryflow3days2    4/18/2021  15:00      15        
+dryflow3days2    4/18/2021  15:30      11        
+dryflow3days2    4/18/2021  16:00      5         
+dryflow3days2    4/18/2021  16:30      17        
+dryflow3days2    4/18/2021  17:00      5         
+dryflow3days2    4/18/2021  17:30      11        
+dryflow3days2    4/18/2021  18:00      13        
+dryflow3days2    4/18/2021  18:30      7         
+dryflow3days2    4/18/2021  19:00      7         
+dryflow3days2    4/18/2021  19:30      4         
+dryflow3days2    4/18/2021  20:00      7         
+dryflow3days2    4/18/2021  20:30      16        
+dryflow3days2    4/18/2021  21:00      7         
+dryflow3days2    4/18/2021  21:30      18        
+dryflow3days2    4/18/2021  22:00      19        
+dryflow3days2    4/18/2021  22:30      16        
+dryflow3days2    4/18/2021  23:00      9         
+dryflow3days2    4/18/2021  23:30      9         
 
 [REPORT]
 ;;Reporting Options
