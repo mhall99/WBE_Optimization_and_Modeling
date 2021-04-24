@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Sat Apr 24 11:34:37 2021
+
+@author: Shalk
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Fri Mar  5 17:03:43 2021
 
 @author: Shalk
@@ -329,7 +336,7 @@ def allpathlengths(nodeids):
         x=x+1
     return lengthsfrominput
 
-
+nodesinflow=[]
 nodespollution=[]
 placeholder=[]
 timesteps=[]
@@ -337,6 +344,7 @@ timesteps=[]
 with pyswmm.Simulation(inp) as sim:
     links = pyswmm.Links(sim)
     nodes = pyswmm.Nodes(sim)
+    systemrouting=pyswmm.SystemStats(sim)
     
     
     get_nodes_and_links(links, nodes)
@@ -393,10 +401,9 @@ with pyswmm.Simulation(inp) as sim:
     B = np.eye(m,n) #details location of viral inputs
     C = np.eye(n) #details location of sensors in the system (assuming all nodes have sensors)
     D=0
+    
+    
 
-    
-    
-    
     
     #steps through the simulation and allows for information to be gathered
     #   at each step of the simulation
@@ -405,14 +412,22 @@ with pyswmm.Simulation(inp) as sim:
         #cant do below because it is a list object as seen in above print statement
         #timesteps.append(sim.current_time)
         
+        
         count=0
         placeholder=[]
+        pholder2=[]
         while count < nodecount:
             #creates a list of the current pollution values at each node
             placeholder.append(list(allnodesid[count].pollut_quality.values())[0])
+            if allnodesid[count].lateral_inflow>0:
+                pholder2.append(193500/allnodesid[count].lateral_inflow)
+            else:
+                pholder2.append(allnodesid[count].lateral_inflow)
             count=count+1
         #applies pollution values to a new row of nodes pollution
         nodespollution.append(placeholder)
+        nodesinflow.append(pholder2)
+        
         #print(nodespollution[0])
         #print(placeholder)
         
@@ -444,15 +459,28 @@ with pyswmm.Simulation(inp) as sim:
 #print(timesteps)
 count=0
 rollingtotal=0
-a_file=open("output_pollution","w")
+Y=[]
+#a_file=open("output_pollution","w")
 while(count<len(nodespollution)):
-
-    np.savetxt(a_file,nodespollution[count])
-    print(nodespollution[count])
+    
+    Y.append(nodespollution[count])
+       
+    #np.savetxt(a_file,nodespollution[count])
+    #print(nodespollution[count])
     rollingtotal=rollingtotal+1
     count=count+60
-    
-a_file.close()
+
+Y=np.transpose(Y)
+U=[]
+count=0
+while(count<len(nodesinflow)):
+    U.append(nodesinflow[count])
+    count=count+60
+
+        
+        
+#a_file.close()
+
 
 
     #print(pollution[0])
@@ -480,4 +508,3 @@ a_file.close()
 #python dict function to store all our list and big data. savable into a json.
 #django web server. has a data model which stores all componenets and measurements
 #   possibly use to organziealll data. django
-    

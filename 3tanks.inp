@@ -147,13 +147,12 @@ covid-protein    #/L    0.0        0.0        0.0        2.796      NO         *
 [INFLOWS]
 ;;Node           Constituent      Time Series      Type     Mfactor  Sfactor  Baseline Pattern
 ;;-------------- ---------------- ---------------- -------- -------- -------- -------- --------
-N-5              FLOW             ""               FLOW     1.0      1.0      2       
-N-6              FLOW             dryflow3days     FLOW     1.0      1.0      2       
+N-6              FLOW             dryflow3days     FLOW     1.0      1.0      1       
 
 [DWF]
 ;;Node           Constituent      Baseline   Patterns  
 ;;-------------- ---------------- ---------- ----------
-N-6              FLOW             2          "" "" ""
+N-6              FLOW             1          "" "" ""
 N-6              covid-protein    1935000    "" "" ""
 
 [CURVES]
@@ -173,43 +172,43 @@ T-BERM2                     4.27       12.7
 ;;Name           Date       Time       Value     
 ;;-------------- ---------- ---------- ----------
 RAIN2                       4:00       0         
-RAIN2                       4:05       3.8       
-RAIN2                       4:10       9         
-RAIN2                       4:15       9.9       
-RAIN2                       4:20       16.3      
-RAIN2                       4:25       19.8      
-RAIN2                       4:30       25.9      
-RAIN2                       4:35       30.7      
-RAIN2                       4:40       35.2      
-RAIN2                       4:45       43        
-RAIN2                       4:50       48        
-RAIN2                       4:55       25.3      
-RAIN2                       5:00       24        
-RAIN2                       5:05       12.8      
-RAIN2                       5:10       11.2      
-RAIN2                       5:15       4.8       
-RAIN2                       5:20       2.2       
-RAIN2                       5:25       1.6       
+RAIN2                       4:05       0         
+RAIN2                       4:10       0         
+RAIN2                       4:15       0         
+RAIN2                       4:20       0         
+RAIN2                       4:25       0         
+RAIN2                       4:30       0         
+RAIN2                       4:35       0         
+RAIN2                       4:40       0         
+RAIN2                       4:45       0         
+RAIN2                       4:50       0         
+RAIN2                       4:55       0         
+RAIN2                       5:00       0         
+RAIN2                       5:05       0         
+RAIN2                       5:10       0         
+RAIN2                       5:15       0         
+RAIN2                       5:20       0         
+RAIN2                       5:25       0         
 RAIN2                       5:30       0         
 ;
 RAIN1                       3:30       0         
-RAIN1                       3:35       6         
-RAIN1                       3:40       14        
-RAIN1                       3:45       15.5      
-RAIN1                       3:50       25.5      
-RAIN1                       3:55       31        
-RAIN1                       4:00       43.5      
-RAIN1                       4:05       51.6      
-RAIN1                       4:10       53.2      
-RAIN1                       4:15       53.8      
-RAIN1                       4:20       54        
-RAIN1                       4:25       42.5      
-RAIN1                       4:30       40.3      
-RAIN1                       4:35       21.5      
-RAIN1                       4:40       16.1      
-RAIN1                       4:45       6.9       
-RAIN1                       4:50       3.2       
-RAIN1                       5:00       2.3       
+RAIN1                       3:35       0         
+RAIN1                       3:40       0         
+RAIN1                       3:45       0         
+RAIN1                       3:50       0         
+RAIN1                       3:55       0         
+RAIN1                       4:00       0         
+RAIN1                       4:05       0         
+RAIN1                       4:10       0         
+RAIN1                       4:15       0         
+RAIN1                       4:20       0         
+RAIN1                       4:25       0         
+RAIN1                       4:30       0         
+RAIN1                       4:35       0         
+RAIN1                       4:40       0         
+RAIN1                       4:45       0         
+RAIN1                       4:50       0         
+RAIN1                       5:00       0         
 RAIN1                       5:05       0         
 ;
 dryflow3days     4/13/2021  0:00       1         
