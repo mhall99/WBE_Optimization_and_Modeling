@@ -399,7 +399,7 @@ with pyswmm.Simulation(inp) as sim:
     
     
     #steps through the simulation and allows for information to be gathered
-    # at each step of the simulation
+    #   at each step of the simulation
     for step in sim:
         #print(sim.current_time)
         #cant do below because it is a list object as seen in above print statement
@@ -418,30 +418,34 @@ with pyswmm.Simulation(inp) as sim:
         
         count = 0
         currentlink=0
-        while count < nodecount:
+        #while count < nodecount:
             #this is our t from v = d/t
-            found=False
-            x=0
-            while not(found):
-                if allnodesid[count]==linkinletsid[x]:
-                    currentlink=linksid[x]
-                    found=True
-                    print(currentlink.linkid)
-                x=x+1
-            
-            flowtime = lengthsfrominput[count][count+1]/currentlink.flow
+        #    found=False
+        #    x=0
+        #   while not(found):
+        #       if allnodesid[count]==linkinletsid[x]:
+        #           currentlink=linksid[x]
+        #           found=True
+        #           print(currentlink.linkid)
+        #       x=x+1
+        #   
+        #   flowtime = lengthsfrominput[count][count+1]/currentlink.flow
             
             #A should be a diagonal matrix 
-            print(flowtime)
+        #   print(flowtime)
             #A[count][count] = np.log(No-Nt)/flowtime
-            count=count+1
+        #   count=count+1
         
     #now that all data is out, transpose to make data in rows 
     #   related to a single node
-    nodespollution=np.transpose(nodespollution)
+    #nodespollution=np.transpose(nodespollution)
     
     #print(nodespollution)
 #print(timesteps)
+a_file=open("output_pollution","w")
+np.savetxt(a_file,nodespollution[3500])
+a_file.close()
+
 
     #print(pollution[0])
         #placeholder=list(allnodesid[0].pollut_quality.values())[0]
