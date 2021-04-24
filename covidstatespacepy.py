@@ -435,15 +435,23 @@ with pyswmm.Simulation(inp) as sim:
         #   print(flowtime)
             #A[count][count] = np.log(No-Nt)/flowtime
         #   count=count+1
-        
+        #print(sim.current_time)
     #now that all data is out, transpose to make data in rows 
     #   related to a single node
     #nodespollution=np.transpose(nodespollution)
     
     #print(nodespollution)
 #print(timesteps)
+count=0
+rollingtotal=0
 a_file=open("output_pollution","w")
-np.savetxt(a_file,nodespollution[3500])
+while(count<len(nodespollution)):
+
+    np.savetxt(a_file,nodespollution[count])
+    print(nodespollution[count])
+    rollingtotal=rollingtotal+1
+    count=count+60
+    
 a_file.close()
 
 
