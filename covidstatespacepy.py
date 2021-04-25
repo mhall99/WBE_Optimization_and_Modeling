@@ -447,10 +447,16 @@ id_sys=sp.system_identification(Y, U, method, SS_f=17, SS_p=17, SS_fixed_order=1
 xid, yid = sp.functionsetSIM.SS_lsim_process_form(id_sys.A, id_sys.B, id_sys.C, id_sys.D, U, id_sys.x0)
 Time = np.linspace(0, tfin, npts)
 
-test_keys = ["A", "B", "C", "D", "x0"]
+sys_keys = ["A", "B", "C", "D", "x0"]
+sys_values = [id_sys.A, id_sys.B, id_sys.C, id_sys.D, id_sys.x0]
 res = {}
+i=0
+for key in sys_keys:
+        res[key] = sys_values[i]
+        i=i+1
 
-#scipy.io.savemat('something.mat', mdict={'arr': arr})
+
+scipy.io.savemat('sys_id.mat', res)
 
 plt.close("all")
 fig0 = plt.figure(0)
