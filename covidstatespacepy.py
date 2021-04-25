@@ -21,6 +21,7 @@ import numpy as np
 import re
 import sippy as sp
 
+
 # ***********************************************************************
 #  Declaration of simulation files and variables
 # ***********************************************************************
@@ -296,9 +297,15 @@ def branches(nextnode, endnode):
 #   this yields an m allnodesid by n allnodesid table of lengths from m->n
 def allpathlengths(nodeids):
     x=0
+    #this stores the linkks in the paths for each element
+    #   of the lengthsfrominput array
+    s2epathpositions=[]
+    
     for n in nodeids:
         count=0
+        
         placeholder=[]
+        placeholder2=[]
         while count<nodecount:
             s2elength=0
             s2epositionsreduced=[]
@@ -309,19 +316,25 @@ def allpathlengths(nodeids):
                 if linksid[y].is_conduit():
                     s2elength=s2elength+length[y]
             placeholder.append(s2elength)
+            placeholder2.append(s2epositions)
             count=count+1
-        lengthsfrominput.append(placeholder)     
+        s2epathpositions.append(placeholder2)
+        lengthsfrominput.append(placeholder)
+        
     x=0        
     while x<nodecount:
         print(nodeids[x].nodeid, lengthsfrominput[x])
         x=x+1
-    return lengthsfrominput
+        
+    
+    return lengthsfrominput, s2epathpositions
 
 nodesinflow=[]
 nodespollution=[]
 placeholder=[]
 timesteps=[]
 A=[]
+
 
 with pyswmm.Simulation(inp) as sim:
     links = pyswmm.Links(sim)
@@ -331,6 +344,7 @@ with pyswmm.Simulation(inp) as sim:
     
     get_nodes_and_links(links, nodes)
     length=get_link_length(inp)
+    totalflowtime=np.zeros((nodecount,nodecount))
     
     for x in length:
         totallength=x+totallength
@@ -338,9 +352,11 @@ with pyswmm.Simulation(inp) as sim:
     x=0
     inputnodes=[]
     lengthsfrominput=[]
+    pathpositions=[]
     
+    lengthsfrominput, pathpositions=allpathlengths(allnodesid)
+
     
-    lengthsfrominput=allpathlengths(allnodesid)
     #***************************************************
     #State Space initialization
     #***************************************************
@@ -348,11 +364,11 @@ with pyswmm.Simulation(inp) as sim:
     Nt=No
     #until we can get length from inp this will be a placeholder
 
-
+    
 
     n = nodecount #number of states in the system
-    n = totallength/10 #number of states in the system
-    n=int(n)
+    #n = totallength/10 #number of states in the system
+    #n=int(n)
     m = 2 #number of inputs
     #input output matrices which are constant for now. may change if we make
     #   state space time variant
@@ -361,6 +377,8 @@ with pyswmm.Simulation(inp) as sim:
     C = np.eye(n) #details location of sensors in the system (assuming all nodes have sensors)
     D=0
     #k=2.796
+    
+    
     #steps through the simulation and allows for information to be gathered
     #   at each step of the simulation
     for step in sim:
@@ -369,6 +387,71 @@ with pyswmm.Simulation(inp) as sim:
         #timesteps.append(sim.current_time)
         
         
+        
+        #totalpathflowsarray
+        # take each element pathpositions then take each element of
+        #   that element(that elemeent being all link positions on the path)
+        #   take the flow of those elements and sum the results then take 
+        #   average
+        #   append that to a placeholder
+        #   after the each element of path positions is done append
+        #   the placeholder to a totalpathflows array
+        deltaVflow=[]
+        count=0
+        for x in pathpositions:
+            
+            count2=0
+            phold2=[]
+            for y in pathpositions[count]:
+                #print(pathpositions[count][count2])
+                phold=pathpositions[count][count2]
+                #print(phold)
+                count3=0
+                elementflowtotal=0
+                for z in phold:
+                    #print(z)
+                    elementflowtotal=elementflowtotal+linksid[z].flow
+                    count3=count3+1
+                    
+                if count3>0:
+                    elementdeltaV=elementflowtotal/count3
+                else:
+                    elementdeltaV=0
+                phold2.append(elementdeltaV)
+                count2=count2+1
+            deltaVflow.append(phold2)
+            count=count+1
+            
+        flowtime=[]  
+        #now to get a flowtime array we divide each element of lengthsfrominput
+        #   by each element of deltaVflow. must include a clause checking
+        #   if the element of deltaVflow is 0 to just set the element
+        #   of our flowtime array to 0
+        count=0
+        
+        for x in lengthsfrominput:
+            count2=0
+            phold=[]
+            for y in deltaVflow:
+                if deltaVflow[count][count2]==0:
+                    ftime=0
+                else:
+                    ftime=lengthsfrominput[count][count2]/deltaVflow[count][count2]
+                phold.append(ftime)
+
+                count2=count2+1
+            
+            flowtime.append(phold)
+            count=count+1
+            
+            
+        flowtime=np.array(flowtime)
+        totalflowtime=flowtime+flowtime
+        
+        
+        
+
+        #print(deltaVflow)
         count=0
         placeholder=[]
         pholder2=[]
@@ -387,32 +470,13 @@ with pyswmm.Simulation(inp) as sim:
         #No=Xo which , freeze hydraulics have a constant A instead of a variable A....Y[]=Nt
         #q(t)=c*e^kt
         #Q'=kQ
-        #
-        count = 0
-        currentlink=0
-        while count < nodecount:
-            found=False
-            x=0
-            while not(found):
-                if allnodesid[count]==linkinletsid[x]:
-                    currentlink=linksid[x]
-                    found=True
-                    #print(currentlink.linkid)
-                x=x+1
-            if currentlink.flow>0:
-                flowtime = lengthsfrominput[count][count+1]/currentlink.flow
-            else:
-                flowtime=0
-            count=count+1
-        #A matrix, multiply A by X, Amatrixelements=k*flowtime
-        #if flowtime>0:        
-            #A[count][count] = n....
-        #else:
-         #   A[count][count] = 0
-        #A*x(t)+B*u(t)=C*y(t)+D*u(t)
+        #A matrix is a diagnolNumber of states=number of nodes so 13x13 n*n
+        #A matrix holds evolving k has equation k=np.log(No-Nt)/flowtime
+        #No = x0 which correspond to initial quality state of the nodes
+        #   that would be U matrix.
+        #Nt = Y matrix
+        #so for both Nt and No, we must 
         
-        #print(nodespollution[0])
-        #print(placeholder)
     
     #print(nodespollution)
 #print(timesteps)
@@ -429,52 +493,54 @@ while(count<len(nodespollution)):
     rollingtotal=rollingtotal+1
     count=count+60
 
-Y=np.transpose(Y)
+#Y=np.transpose(Y)
+Y=np.array(Y)
+
 U=[]
 count=0
 while(count<len(nodesinflow)):
     U.append(nodesinflow[count])
     count=count+60
     
-U = np.transpose(U)
-
-ts = 100
-tfin = 28600
-npts = int(old_div(tfin, ts)) + 1
-method = 'CVA'
-id_sys=sp.system_identification(Y, U, method, SS_f=17, SS_p=17, SS_fixed_order=15, tsample=ts, SS_A_stability=False)      
-#a_file.close()
-xid, yid = sp.functionsetSIM.SS_lsim_process_form(id_sys.A, id_sys.B, id_sys.C, id_sys.D, U, id_sys.x0)
-Time = np.linspace(0, tfin, npts)
-
-sys_keys = ["A", "B", "C", "D", "x0"]
-sys_values = [id_sys.A, id_sys.B, id_sys.C, id_sys.D, id_sys.x0]
-res = {}
-i=0
-for key in sys_keys:
-        res[key] = sys_values[i]
-        i=i+1
+U=np.array(U)
+#U = np.transpose(U)
 
 
-scipy.io.savemat('sys_id.mat', res)
 
-plt.close("all")
-fig0 = plt.figure(0)
-plt.subplot(2, 1, 1)
 
-plt.plot(Time, Y[0])
-plt.plot(Time, yid[0])
-plt.ylabel("y_tot[0]")
-plt.grid()
+
+#ts = 100
+#tfin = 28600
+#npts = int(old_div(tfin, ts)) + 1
+#method = 'CVA'
+#id_sys=sp.system_identification(Y, U, method, SS_f=17, SS_p=17, SS_fixed_order=15, tsample=ts, SS_A_stability=False)      
+##a_file.close()
+#xid, yid = sp.functionsetSIM.SS_lsim_process_form(id_sys.A, id_sys.B, id_sys.C, id_sys.D, U, id_sys.x0)
+#Time = np.linspace(0, tfin, npts)
+
+#test_keys = ["A", "B", "C", "D", "x0"]
+#res = {}
+
+#below was commented out before
+#scipy.io.savemat('something.mat', mdict={'arr': arr})
+
+#plt.close("all")
+#fig0 = plt.figure(0)
+#plt.subplot(2, 1, 1)
+
+#plt.plot(Time, Y[0])
+#plt.plot(Time, yid[0])
+#plt.ylabel("y_tot[0]")
+#plt.grid()
 # plt.xlabel("Time")
 # plt.title("Ytot[1]")
-plt.legend(['Original system', 'Identified system, ' + method])
+#plt.legend(['Original system', 'Identified system, ' + method])
 
 
-norm_of_difference_Y0 = np.zeros((287, 1))
+#norm_of_difference_Y0 = np.zeros((287, 1))
 #norm_of_difference_Y1_8node = np.zeros((1, 287))
-diff = np.zeros((1, 287))
-diff[0, :] = (Y[0] - yid[0])
+#diff = np.zeros((1, 287))
+#diff[0, :] = (Y[0] - yid[0])
 #diff_8node[1, :] = (y_tot_8node[1, :] - yid_8node[1, :])
 
 #norm_of_difference_Y0_eyeC = np.zeros((601, 1))
@@ -483,17 +549,17 @@ diff[0, :] = (Y[0] - yid[0])
 #diff_eyeC[0, :] = (y_tot_eyeC[0, :] - yid_eyeC[0, :])
 #diff_eyeC[1, :] = (y_tot_eyeC[1, :] - yid_eyeC[1, :])
 
-for n in range(0, 287):
-    norm_of_difference_Y0[n, 0] = np.linalg.norm(diff[0, n]) #(diff[0, n] * (10 ** 2))
+#for n in range(0, 287):
+#    norm_of_difference_Y0[n, 0] = np.linalg.norm(diff[0, n]) #(diff[0, n] * (10 ** 2))
     #norm_of_difference_Y1_8node[n, 0] = np.linalg.norm(diff_8node[1, n] * (10 ** 2))
     #norm_of_difference_Y0_eyeC[n, 0] = np.linalg.norm(diff_eyeC[0, n] * (10 ** 2))
     #norm_of_difference_Y1_eyeC[n, 0] = np.linalg.norm(diff_eyeC[1, n] * (10 ** 2))
     #print(norm_of_difference)
-plt.subplot(2,1,2)
-plt.plot(Time, norm_of_difference_Y0[:,0])
-total_error = np.sum(norm_of_difference_Y0[:,0])
-print(total_error)
+#plt.subplot(2,1,2)
+#plt.plot(Time, norm_of_difference_Y0[:,0])
+#total_error = np.sum(norm_of_difference_Y0[:,0])
+#print(total_error)
 #plt.plot(Time, norm_of_difference_Y1_eyeC[:, 0])
-plt.ylabel("L2 norm between Y & yid")
-plt.grid()
-plt.xlabel("Time")
+#plt.ylabel("L2 norm between Y & yid")
+#plt.grid()
+#plt.xlabel("Time")
