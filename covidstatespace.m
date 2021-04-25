@@ -1,6 +1,6 @@
 clear all
-load('sys_id');
-inp = 'swmm_files\3tanks.inp'
+load('swmmSS');
+inp = '3tanks.inp'
 
 CurrentValue.SystemDynamicMatrix.A = A;
 CurrentValue.SystemDynamicMatrix.C = C;
@@ -59,14 +59,22 @@ TankCount=size(storage);
 TankCount=TankCount(1,2);
 ElementCount.TankCount=TankCount;
 
-
 numberofX = size(x0);
 numberofX = numberofX(1,1);
 numberofStep5mins = 100; %not sure what this should be
+IndexInVar.NumberofX = numberofX;
+sensorNumberArray = [1:9] %[1:JunctionCount] junctioncount=number of nodes, cant be, must < nodecount
 
-sensorNumberArray = [1:JunctionCount];%junctioncount=number of nodes
+NumberofElement=PipeCount+JunctionCount+ValveCount+PumpCount+TankCount+ReservoirCount;
+IndexInVar.NumberofElement = NumberofElement;
+IndexInVar.Junction_CIndex = allnodesstr; %to be imported later 
+IndexInVar.Reservoir_CIndex = subcatch;
+IndexInVar.Tank_CIndex = storage;
+blah = size(links)
+blah = blah(1,2)
+Pipe_CIndex = zeros(blah, NumberofSegments4Pipes)
 
-NumberofElement=PipeCount+JunctionCount+ValveCount+PumpCount+TankCount+ReservoirCount
+IndexInVar.Pipe_CIndex = 
 
 PreviousValue.tInMin = 0;
 PreviousValue.X_estimated = x0;
