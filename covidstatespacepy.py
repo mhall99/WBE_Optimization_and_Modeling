@@ -321,6 +321,7 @@ nodesinflow=[]
 nodespollution=[]
 placeholder=[]
 timesteps=[]
+A=[]
 
 with pyswmm.Simulation(inp) as sim:
     links = pyswmm.Links(sim)
@@ -340,8 +341,26 @@ with pyswmm.Simulation(inp) as sim:
     
     
     lengthsfrominput=allpathlengths(allnodesid)
-    
-    
+    #***************************************************
+    #State Space initialization
+    #***************************************************
+    No = 1935000 #initial viral load based on count/Liter
+    Nt=No
+    #until we can get length from inp this will be a placeholder
+
+
+
+    n = nodecount #number of states in the system
+    n = totallength/10 #number of states in the system
+    n=int(n)
+    m = 2 #number of inputs
+    #input output matrices which are constant for now. may change if we make
+    #   state space time variant
+    A = np.eye(n) #details decay factors of viral load for each state
+    B = np.eye(m,n) #details location of viral inputs
+    C = np.eye(n) #details location of sensors in the system (assuming all nodes have sensors)
+    D=0
+    #k=2.796
     #steps through the simulation and allows for information to be gathered
     #   at each step of the simulation
     for step in sim:
@@ -364,6 +383,33 @@ with pyswmm.Simulation(inp) as sim:
         #applies pollution values to a new row of nodes pollution
         nodespollution.append(placeholder)
         nodesinflow.append(pholder2)
+        #nodespollution=np.transpose(nodespollution)
+        #No=Xo which , freeze hydraulics have a constant A instead of a variable A....Y[]=Nt
+        #q(t)=c*e^kt
+        #Q'=kQ
+        #
+        count = 0
+        currentlink=0
+        while count < nodecount:
+            found=False
+            x=0
+            while not(found):
+                if allnodesid[count]==linkinletsid[x]:
+                    currentlink=linksid[x]
+                    found=True
+                    #print(currentlink.linkid)
+                x=x+1
+            if currentlink.flow>0:
+                flowtime = lengthsfrominput[count][count+1]/currentlink.flow
+            else:
+                flowtime=0
+            count=count+1
+        #A matrix, multiply A by X, Amatrixelements=k*flowtime
+        #if flowtime>0:        
+            #A[count][count] = n....
+        #else:
+         #   A[count][count] = 0
+        #A*x(t)+B*u(t)=C*y(t)+D*u(t)
         
         #print(nodespollution[0])
         #print(placeholder)
