@@ -16,7 +16,7 @@ Created on Fri Mar  5 17:03:43 2021
 import pyswmm  # The SWMM module
 import matplotlib.pyplot as plt
 from past.utils import old_div  # Module for plotting
-import scipy
+import scipy.io
 import numpy as np
 import re
 import sippy as sp
@@ -369,7 +369,7 @@ with pyswmm.Simulation(inp) as sim:
     n = nodecount #number of states in the system
     #n = totallength/10 #number of states in the system
     #n=int(n)
-    m = 2 #number of inputs
+    m = nodecount #number of inputs
     #input output matrices which are constant for now. may change if we make
     #   state space time variant
     A = np.eye(n) #details decay factors of viral load for each state
@@ -377,7 +377,20 @@ with pyswmm.Simulation(inp) as sim:
     C = np.eye(n) #details location of sensors in the system (assuming all nodes have sensors)
     D=0
     #k=2.796
-    
+    C = np.zeros((n,n)) #details location of sensors in the system (no longer assuming all nodes have sensors)
+    #sensor_node_count = int(n/2)
+    #blah = range(0,sensor_node_count)
+    userdefined_sensor_nodes=['N-5','N-7','N-9']
+    sensorNodes=[]
+    count=0
+    for x in allnodesstr:
+        for y in userdefined_sensor_nodes:
+            if x==y:
+                sensorNodes.append(count)
+        count=count+1
+#c matrix is a nodecountXnodecount 0 matrix
+    for x in sensorNodes:
+        C[x,x]=1
     
     #steps through the simulation and allows for information to be gathered
     #   at each step of the simulation
@@ -493,8 +506,8 @@ while(count<len(nodespollution)):
     rollingtotal=rollingtotal+1
     count=count+60
 
-#Y=np.transpose(Y)
-Y=np.array(Y)
+Y=np.transpose(Y)
+#Y=np.array(Y)
 
 U=[]
 count=0
@@ -502,39 +515,68 @@ while(count<len(nodesinflow)):
     U.append(nodesinflow[count])
     count=count+60
     
-U=np.array(U)
-#U = np.transpose(U)
+#U=np.array(U)
+U = np.transpose(U)
+
+A=np.zeros((nodecount,nodecount))
+count=0
+while count<nodecount:
+    if totalflowtime[count][np.size(totalflowtime,1)-1]==0:
+    	A[count][count]=0
+    else:
+        #np.log(U-Y)/totalflowtime
+        #U[count][np.size(U,1)-1]  this would get the values of the last column
+        A[count][count]=np.log(-U[count][np.size(U,1)-1]+Y[count][np.size(Y,1)-1] )/totalflowtime[count][np.size(totalflowtime,1)-1]
+    count=count+1
+count=0
+while count<nodecount:
+    print(A[count])
+    count=count+1
 
 
-
-
-
-#ts = 100
-#tfin = 28600
-#npts = int(old_div(tfin, ts)) + 1
+ts = 100
+tfin = 28600
+npts = int(old_div(tfin, ts)) + 1
 #method = 'CVA'
 #id_sys=sp.system_identification(Y, U, method, SS_f=17, SS_p=17, SS_fixed_order=15, tsample=ts, SS_A_stability=False)      
 ##a_file.close()
+
+x0=np.zeros((nodecount,1))
+#x0=np.ones((nodecount,1))
+#x0=x0*100000
+
 #xid, yid = sp.functionsetSIM.SS_lsim_process_form(id_sys.A, id_sys.B, id_sys.C, id_sys.D, U, id_sys.x0)
-#Time = np.linspace(0, tfin, npts)
+xid, yid = sp.functionsetSIM.SS_lsim_process_form(A, B, C, D, U, x0)
+yid=yid*5
+
+Time = np.linspace(0, tfin, npts)
 
 #test_keys = ["A", "B", "C", "D", "x0"]
 #res = {}
 
 #below was commented out before
-#scipy.io.savemat('something.mat', mdict={'arr': arr})
+sys_keys = ["A", "B", "C", "D", "x0", "yid", "Y"]
+sys_values = [A, B, C, D, x0, yid, Y]
+res = {}
+i=0
+for key in sys_keys:
+        res[key] = sys_values[i]
+        i=i+1
 
-#plt.close("all")
-#fig0 = plt.figure(0)
+
+scipy.io.savemat('swmmSS.mat', res)
+
+plt.close("all")
+fig0 = plt.figure(0)
 #plt.subplot(2, 1, 1)
 
-#plt.plot(Time, Y[0])
-#plt.plot(Time, yid[0])
-#plt.ylabel("y_tot[0]")
-#plt.grid()
-# plt.xlabel("Time")
-# plt.title("Ytot[1]")
-#plt.legend(['Original system', 'Identified system, ' + method])
+plt.plot(Time, Y[0])
+plt.plot(Time, yid[0])
+plt.ylabel("y_tot[0]")
+plt.grid()
+plt.xlabel("Time")
+plt.title("Ytot[1]")
+plt.legend(['Original system', 'our system'])
 
 
 #norm_of_difference_Y0 = np.zeros((287, 1))
