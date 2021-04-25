@@ -16,7 +16,7 @@ Created on Fri Mar  5 17:03:43 2021
 import pyswmm  # The SWMM module
 import matplotlib.pyplot as plt
 from past.utils import old_div  # Module for plotting
-import scipy.signal as signal
+import scipy
 import numpy as np
 import re
 import sippy as sp
@@ -395,11 +395,16 @@ U = np.transpose(U)
 ts = 100
 tfin = 28600
 npts = int(old_div(tfin, ts)) + 1
-method = 'PARSIM-K'
-id_sys=sp.system_identification(Y, U, method, SS_f=60, SS_p=60, SS_fixed_order=50, tsample=ts, SS_A_stability=False)      
+method = 'CVA'
+id_sys=sp.system_identification(Y, U, method, SS_f=17, SS_p=17, SS_fixed_order=15, tsample=ts, SS_A_stability=False)      
 #a_file.close()
 xid, yid = sp.functionsetSIM.SS_lsim_process_form(id_sys.A, id_sys.B, id_sys.C, id_sys.D, U, id_sys.x0)
 Time = np.linspace(0, tfin, npts)
+
+test_keys = ["A", "B", "C", "D", "x0"]
+res = {}
+
+#scipy.io.savemat('something.mat', mdict={'arr': arr})
 
 plt.close("all")
 fig0 = plt.figure(0)
@@ -434,6 +439,8 @@ for n in range(0, 287):
     #print(norm_of_difference)
 plt.subplot(2,1,2)
 plt.plot(Time, norm_of_difference_Y0[:,0])
+total_error = np.sum(norm_of_difference_Y0[:,0])
+print(total_error)
 #plt.plot(Time, norm_of_difference_Y1_eyeC[:, 0])
 plt.ylabel("L2 norm between Y & yid")
 plt.grid()
