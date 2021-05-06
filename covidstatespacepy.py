@@ -1,15 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Apr 24 11:34:37 2021
-
-@author: Shalk
-"""
-
-# -*- coding: utf-8 -*-
-"""
 Created on Fri Mar  5 17:03:43 2021
-
-@author: Shalk
+@author: Christian Snowden, MacKenzie Hall
 """
 
 # Imported modules
@@ -20,6 +12,7 @@ import scipy.io
 import numpy as np
 import re
 import sippy as sp
+from sippy import functionsetSIM
 
 
 # ***********************************************************************
@@ -28,7 +21,8 @@ import sippy as sp
 
 #dont forget to change inp depending on your own hierarchy
 inp    = "swmm_files/3tanks.inp"  # Input file
-
+#inp = "swmm_files/RedChicoSur_Gates.inp"
+#inp="swmm_files/Example3.inp"
 aeflow   = []
 time   = []
 flowtime = []
@@ -150,9 +144,7 @@ def get_link_length(inp):
         for line in inpDeck:
         #   to use as conditions if pattern is found.
             match=regex.search(line)
-            match4=regex4.search(line)
-
-        
+            match4=regex4.search(line)       
             #check if match for Length is found then will update 
             #   lengthcheck to 1 to act as true for another if statement
             if(match):
@@ -232,15 +224,6 @@ def branches(nextnode, endnode):
                 #print("found an end", nodeofpath.nodeid,"->", nextnode.nodeid,
                 #     "current link", currentlink,"at position", branchposition[x])
                 allfoundlinks.append(branchposition[x])
-                #if linksid[count].is_conduit():
-                    #or is it currentlink= linksid[count] and then
-                    #   append it at the end
-                    #link with outlet at count is same as link with inlet at count
-                    #   and therefore should be our current link that we get
-                    #   a length from
-                    #print(linksid[count].linkid)
-                    #currentlink=linksid[count].linkid
-                    #allfoundlinks.append(currentlink)   
                 #since this is the endnode we got what we wanted from this branch
                 gotwhatwewanted=True
                 
@@ -374,7 +357,7 @@ with pyswmm.Simulation(inp) as sim:
     #   state space time variant
     A = np.eye(n) #details decay factors of viral load for each state
     B = np.eye(m,n) #details location of viral inputs
-    C = np.eye(n) #details location of sensors in the system (assuming all nodes have sensors)
+    #C = np.eye(n) #details location of sensors in the system (assuming all nodes have sensors)
     D=0
     #k=2.796
     C = np.zeros((n,n)) #details location of sensors in the system (no longer assuming all nodes have sensors)
@@ -388,9 +371,17 @@ with pyswmm.Simulation(inp) as sim:
             if x==y:
                 sensorNodes.append(count)
         count=count+1
+    
+    #C=np.zeros((nodecount,nodecount))
+    count=0
+    while count<nodecount:
+        C[count,count]=1
+        count=count+3
+
+        
 #c matrix is a nodecountXnodecount 0 matrix
-    for x in sensorNodes:
-        C[x,x]=1
+    #for x in sensorNodes:
+     #   C[x,x]=1
     
     #steps through the simulation and allows for information to be gathered
     #   at each step of the simulation
@@ -398,7 +389,8 @@ with pyswmm.Simulation(inp) as sim:
         #print(sim.current_time)
         #cant do below because it is a list object as seen in above print statement
         #timesteps.append(sim.current_time)
-        
+        print(sim.current_time)
+        sim.step_advance(30)
         
         
         #totalpathflowsarray
@@ -440,8 +432,7 @@ with pyswmm.Simulation(inp) as sim:
         #   by each element of deltaVflow. must include a clause checking
         #   if the element of deltaVflow is 0 to just set the element
         #   of our flowtime array to 0
-        count=0
-        
+        count=0  
         for x in lengthsfrominput:
             count2=0
             phold=[]
@@ -452,19 +443,11 @@ with pyswmm.Simulation(inp) as sim:
                     ftime=lengthsfrominput[count][count2]/deltaVflow[count][count2]
                 phold.append(ftime)
 
-                count2=count2+1
-            
+                count2=count2+1          
             flowtime.append(phold)
             count=count+1
-            
-            
         flowtime=np.array(flowtime)
         totalflowtime=flowtime+flowtime
-        
-        
-        
-
-        #print(deltaVflow)
         count=0
         placeholder=[]
         pholder2=[]
@@ -521,21 +504,21 @@ U = np.transpose(U)
 A=np.zeros((nodecount,nodecount))
 count=0
 while count<nodecount:
-    if totalflowtime[count][np.size(totalflowtime,1)-1]==0:
+    if (totalflowtime[count][np.size(totalflowtime,1)-1]==0) or (U[count][np.size(U,1)-1]-Y[count][np.size(Y,1)-1]==0):
     	A[count][count]=0
     else:
         #np.log(U-Y)/totalflowtime
         #U[count][np.size(U,1)-1]  this would get the values of the last column
-        A[count][count]=np.log(-U[count][np.size(U,1)-1]+Y[count][np.size(Y,1)-1] )/totalflowtime[count][np.size(totalflowtime,1)-1]
+        A[count][count]=np.log(abs(U[count][np.size(U,1)-1]-Y[count][np.size(Y,1)-1]) )/totalflowtime[count][np.size(totalflowtime,1)-1]
     count=count+1
 count=0
 while count<nodecount:
-    print(A[count])
+    print(A[count][count])
     count=count+1
 
 
 ts = 100
-tfin = 28600
+tfin=(np.size(U,1)-1)*100
 npts = int(old_div(tfin, ts)) + 1
 #method = 'CVA'
 #id_sys=sp.system_identification(Y, U, method, SS_f=17, SS_p=17, SS_fixed_order=15, tsample=ts, SS_A_stability=False)      
@@ -546,7 +529,8 @@ x0=np.zeros((nodecount,1))
 #x0=x0*100000
 
 #xid, yid = sp.functionsetSIM.SS_lsim_process_form(id_sys.A, id_sys.B, id_sys.C, id_sys.D, U, id_sys.x0)
-xid, yid = sp.functionsetSIM.SS_lsim_process_form(A, B, C, D, U, x0)
+xid, yid = functionsetSIM.SS_lsim_process_form(A, B, C, D, U, x0)
+print('yid',yid)
 yid=yid*5
 
 Time = np.linspace(0, tfin, npts)
@@ -575,7 +559,7 @@ plt.plot(Time, yid[0])
 plt.ylabel("y_tot[0]")
 plt.grid()
 plt.xlabel("Time")
-plt.title("Ytot[1]")
+plt.title("Ytot[0]")
 plt.legend(['Original system', 'our system'])
 
 
@@ -605,3 +589,6 @@ plt.legend(['Original system', 'our system'])
 #plt.ylabel("L2 norm between Y & yid")
 #plt.grid()
 #plt.xlabel("Time")
+
+
+#MPI to help optimize the speed of the program
